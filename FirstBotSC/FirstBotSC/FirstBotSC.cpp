@@ -45,6 +45,8 @@ void FirstBot :: onFrame() {
     if ( u->getType().isWorker() ) {
       workerSet.insert(u);
       u->gather(u->getClosestUnit(Filter::IsMineralField));
+    } else {
+      u->train(u->getType().getRace().getWorker());
     }
   }
   initialFrame = false;
@@ -55,4 +57,18 @@ void FirstBot :: onFrame() {
 
   Broodwar->sendText(ss.str().c_str());
   }
+
 }
+  void FirstBot :: onUnitComplete(Unit unit)
+  {
+    if(unit->getPlayer() == Broodwar->self() && unit->getType().isWorker()) {
+      workerSet.insert(unit);
+      unit->gather(unit->getClosestUnit(Filter::IsMineralField));
+
+      std::stringstream ss;
+
+      ss << "We have " << workerSet.size() << " workers!";
+
+      Broodwar->sendText(ss.str().c_str());
+    }
+  }

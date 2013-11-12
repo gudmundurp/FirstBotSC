@@ -7,6 +7,7 @@ class FirstBot : public BWAPI::AIModule
 	public:
     virtual void onStart();
     virtual void onFrame();
+    virtual void onUnitComplete(BWAPI::Unit unit);
     /*
     virtual void onEnd(bool isWinner);
     virtual void onFrame();
