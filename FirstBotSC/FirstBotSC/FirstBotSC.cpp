@@ -42,8 +42,10 @@ void FirstBot :: onFrame() {
     if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
       continue;
 
-    if ( u->getType().isWorker() )
+    if ( u->getType().isWorker() ) {
       workerSet.insert(u);
+      u->gather(u->getClosestUnit(Filter::IsMineralField));
+    }
   }
   initialFrame = false;
 
@@ -52,7 +54,5 @@ void FirstBot :: onFrame() {
   ss << "We have " << workerSet.size() << " workers!";
 
   Broodwar->sendText(ss.str().c_str());
-
-  workerSet.gather( workerSet.getClosestUnit( Filter::IsMineralField ) );
   }
 }
