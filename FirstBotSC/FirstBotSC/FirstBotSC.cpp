@@ -3,12 +3,34 @@
 #include "FirstBotSC.h"
 
 using namespace BWAPI;
+using namespace Filter;
 
 Unitset workerSet;
+int mainWorker = 0;
+int mainResourceDepot = 0;
+int reservedMinerals = 0;
 bool initialFrame = true;
+
+int getAvailableMinerals() {
+  int retInt = Broodwar->self()->minerals() - reservedMinerals;
+  /*if(retInt < 0) {
+    retInt += reservedMinerals;
+    reservedMinerals = 0;
+  }*/
+  return retInt;
+}
 
 void FirstBot :: onStart() {
   Broodwar->sendText("Hello world!");
+
+  Broodwar->enableFlag(Flag::UserInput);
+
+  // Uncomment the following line and the bot will know about everything through the fog of war (cheat).
+  Broodwar->enableFlag(Flag::CompleteMapInformation);
+
+  // Set the command optimization level so that common commands can be grouped
+  // and reduce the bot's APM (Actions Per Minute).
+  Broodwar->setCommandOptimizationLevel(2);
 }
 
 void FirstBot :: onFrame() {
@@ -17,6 +39,7 @@ void FirstBot :: onFrame() {
   // Display the game frame rate as text in the upper left area of the screen
   Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
   Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
+  Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
 
   // Return if the game is a replay or is paused
   if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
@@ -27,42 +50,98 @@ void FirstBot :: onFrame() {
   if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
     return;
 
-  if(initialFrame) {
+  if(getAvailableMinerals() >= 150) {
+    reservedMinerals += 150;
+    Unit main = Broodwar->getUnit(mainWorker);
+    TilePosition targetBuildLocation = Broodwar->getBuildLocation(UnitTypes::Terran_Barracks, main->getTilePosition());
+              if ( targetBuildLocation )
+              {
+                  main->build( UnitTypes::Terran_Barracks, targetBuildLocation );
+              }
+    
+  }
 
-  // Iterate through all the units that we own
-  Unitset myUnits = Broodwar->self()->getUnits();
-  for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
-  {
-    // Ignore the unit if it no longer exists
-    // Make sure to include this block when handling any Unit pointer!
-    if ( !u->exists() )
-      continue;
+  if(mainResourceDepot < 0) return;
 
-    // Ignore the unit if it has one of the following status ailments
-    if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
-      continue;
+  Unit u = Broodwar->getUnit(mainResourceDepot);
 
-    if ( u->getType().isWorker() ) {
-      workerSet.insert(u);
-      u->gather(u->getClosestUnit(Filter::IsMineralField));
-    } else {
-      u->train(u->getType().getRace().getWorker());
+  if (u->exists() && u->getType().isResourceDepot() ) // A resource depot is a Command Center, Nexus, or Hatchery
+    {
+      // Order the depot to construct more workers! But only when it is idle.
+      if ( u->isIdle() && getAvailableMinerals() >= 50 && !u->train(u->getType().getRace().getWorker()) )
+      {
+              
+        // If that fails, draw the error at the location so that you can visibly see what went wrong!
+        // However, drawing the error once will only appear for a single frame
+        // so create an event that keeps it on the screen for some frames
+        Error lastErr = Broodwar->getLastError();
+        if(lastErr == Errors::Insufficient_Minerals || lastErr == Errors::Insufficient_Gas) return;
+
+        // Retrieve the supply provider type in the case that we have run out of supplies
+        UnitType supplyProviderType = u->getType().getRace().getSupplyProvider();
+        static int lastChecked = 0;
+
+        // If we are supply blocked and haven't tried constructing more recently
+        if (  lastErr == Errors::Insufficient_Supply &&
+              lastChecked + 400 < Broodwar->getFrameCount() &&
+              Broodwar->self()->incompleteUnitCount(supplyProviderType) == 0 )
+        {
+          lastChecked = Broodwar->getFrameCount();
+
+          // Retrieve a unit that is capable of constructing the supply needed
+
+          //Unit supplyBuilder = Broodwar->getUnit(mainWorker);
+
+          Unit supplyBuilder = u->getClosestUnit(  GetType == supplyProviderType.whatBuilds().first &&
+                                                    (IsIdle || IsGatheringMinerals) &&
+                                                    IsOwned);
+
+          // If a unit was found
+          if ( supplyBuilder )
+          {
+            if ( supplyProviderType.isBuilding() )
+            {
+              TilePosition targetBuildLocation = Broodwar->getBuildLocation(supplyProviderType, supplyBuilder->getTilePosition());
+              if ( targetBuildLocation )
+              {
+                // Register an event that draws the target build location
+                /*Broodwar->registerEvent([targetBuildLocation,supplyProviderType](Game*)
+                                        {
+                                          Broodwar->drawBoxMap( Position(targetBuildLocation),
+                                                                Position(targetBuildLocation + supplyProviderType.tileSize()),
+                                                                Colors::Blue);
+                                        },
+                                        nullptr,  // condition
+                                        supplyProviderType.buildTime() + 100 );  // frames to run
+                                        */
+                // Order the builder to construct the supply structure
+                supplyBuilder->build( supplyProviderType, targetBuildLocation );
+              }
+            }
+            else
+            {
+              // Train the supply provider (Overlord) if the provider is not a structure
+              supplyBuilder->train( supplyProviderType );
+            }
+          } // closure: supplyBuilder is valid
+          else {
+            //Broodwar -> sendText("WTF! mainWorker was %d", mainWorker);
+
+          }
+        } // closure: insufficient supply
+      } // closure: failed to train idle unit
+
     }
-  }
-  initialFrame = false;
-
-  std::stringstream ss;
-
-  ss << "We have " << workerSet.size() << " workers!";
-
-  Broodwar->sendText(ss.str().c_str());
-  }
-
 }
   void FirstBot :: onUnitComplete(Unit unit)
   {
-    if(unit->getPlayer() == Broodwar->self() && unit->getType().isWorker()) {
+    if( unit->getPlayer() != Broodwar->self() ) return;
+
+    if(unit->getType().isWorker()) {
       workerSet.insert(unit);
+
+      mainWorker = unit->getID();
+
       unit->gather(unit->getClosestUnit(Filter::IsMineralField));
 
       std::stringstream ss;
@@ -70,5 +149,24 @@ void FirstBot :: onFrame() {
       ss << "We have " << workerSet.size() << " workers!";
 
       Broodwar->sendText(ss.str().c_str());
+    } else if(unit->getType().isBuilding()) {
+      if(unit->getType().isResourceDepot()){
+          mainResourceDepot = unit->getID();
+          unit->train(unit->getType().getRace().getWorker());
+      }
+      if (Broodwar->elapsedTime() >= 10) {
+          reservedMinerals -= unit->getType().mineralPrice();
+      }
+    } else {
+      using namespace UnitTypes::Enum;
+      switch(unit->getType()) {
+    case Terran_Marine:
+    case Zerg_Zergling:
+    case Protoss_Zealot:
+      Broodwar->sendText("Basic warrior created");
+      return;
+    default:
+      break;
+      }
     }
   }
