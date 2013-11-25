@@ -3,6 +3,7 @@
 #include "FirstBotSC.h"
 
 using namespace BWAPI;
+using namespace UnitTypes::Enum;
 using namespace Filter;
 
 Unitset workerSet;
@@ -40,6 +41,7 @@ void FirstBot :: onFrame() {
   Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
   Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
   Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
+  Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
 
   // Return if the game is a replay or is paused
   if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
@@ -135,6 +137,8 @@ void FirstBot :: onFrame() {
 }
   void FirstBot :: onUnitComplete(Unit unit)
   {
+    if(unit->getType() == Terran_Barracks) Broodwar->sendText("Finally we got a Barracks");
+
     if( unit->getPlayer() != Broodwar->self() ) return;
 
     if(unit->getType().isWorker()) {
@@ -155,10 +159,10 @@ void FirstBot :: onFrame() {
           unit->train(unit->getType().getRace().getWorker());
       }
       if (Broodwar->elapsedTime() >= 10) {
+          Broodwar->sendText("When the fuck is this actually called?");
           reservedMinerals -= unit->getType().mineralPrice();
       }
     } else {
-      using namespace UnitTypes::Enum;
       switch(unit->getType()) {
     case Terran_Marine:
     case Zerg_Zergling:
