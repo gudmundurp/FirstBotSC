@@ -1,6 +1,9 @@
 // This is the main DLL file.
 
 #include "FirstBotSC.h"
+#include "SCV\SCV.h"
+#include "World.h"
+#include <map>
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
@@ -11,6 +14,10 @@ int mainWorker = 0;
 int mainResourceDepot = 0;
 int reservedMinerals = 0;
 bool initialFrame = true;
+
+std::map<int, SCV*> scvs;
+std::vector<SCV> _scvs;
+World world;
 
 int getAvailableMinerals() {
   int retInt = Broodwar->self()->minerals() - reservedMinerals;
@@ -52,89 +59,42 @@ void FirstBot :: onFrame() {
   if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
     return;
 
-  if(getAvailableMinerals() >= 150) {
-    reservedMinerals += 150;
-    Unit main = Broodwar->getUnit(mainWorker);
-    TilePosition targetBuildLocation = Broodwar->getBuildLocation(UnitTypes::Terran_Barracks, main->getTilePosition());
-              if ( targetBuildLocation )
-              {
-                  main->build( UnitTypes::Terran_Barracks, targetBuildLocation );
-              }
-    
-  }
+  // Iterate through all the units that we own
+  Unitset myUnits = Broodwar->self()->getUnits();
+  for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
+  {
+    // Ignore the unit if it no longer exists
+    // Make sure to include this block when handling any Unit pointer!
+    if ( !u->exists() )
+      continue;
 
-  if(mainResourceDepot < 0) return;
+    // Ignore the unit if it has one of the following status ailments
+    if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
+      continue;
 
-  Unit u = Broodwar->getUnit(mainResourceDepot);
+    // Ignore the unit if it is in one of the following states
+    if ( u->isLoaded() || !u->isPowered() || u->isStuck() )
+      continue;
 
-  if (u->exists() && u->getType().isResourceDepot() ) // A resource depot is a Command Center, Nexus, or Hatchery
+    // Ignore the unit if it is incomplete or busy constructing
+    if ( !u->isCompleted() || u->isConstructing() )
+      continue;
+
+    // If the unit is a worker unit
+    if ( u->getType().isWorker() )
     {
-      // Order the depot to construct more workers! But only when it is idle.
-      if ( u->isIdle() && getAvailableMinerals() >= 50 && !u->train(u->getType().getRace().getWorker()) )
-      {
-              
-        // If that fails, draw the error at the location so that you can visibly see what went wrong!
-        // However, drawing the error once will only appear for a single frame
-        // so create an event that keeps it on the screen for some frames
-        Error lastErr = Broodwar->getLastError();
-        if(lastErr == Errors::Insufficient_Minerals || lastErr == Errors::Insufficient_Gas) return;
+      int id = u->getID();
 
-        // Retrieve the supply provider type in the case that we have run out of supplies
-        UnitType supplyProviderType = u->getType().getRace().getSupplyProvider();
-        static int lastChecked = 0;
-
-        // If we are supply blocked and haven't tried constructing more recently
-        if (  lastErr == Errors::Insufficient_Supply &&
-              lastChecked + 400 < Broodwar->getFrameCount() &&
-              Broodwar->self()->incompleteUnitCount(supplyProviderType) == 0 )
-        {
-          lastChecked = Broodwar->getFrameCount();
-
-          // Retrieve a unit that is capable of constructing the supply needed
-
-          //Unit supplyBuilder = Broodwar->getUnit(mainWorker);
-
-          Unit supplyBuilder = u->getClosestUnit(  GetType == supplyProviderType.whatBuilds().first &&
-                                                    (IsIdle || IsGatheringMinerals) &&
-                                                    IsOwned);
-
-          // If a unit was found
-          if ( supplyBuilder )
-          {
-            if ( supplyProviderType.isBuilding() )
-            {
-              TilePosition targetBuildLocation = Broodwar->getBuildLocation(supplyProviderType, supplyBuilder->getTilePosition());
-              if ( targetBuildLocation )
-              {
-                // Register an event that draws the target build location
-                /*Broodwar->registerEvent([targetBuildLocation,supplyProviderType](Game*)
-                                        {
-                                          Broodwar->drawBoxMap( Position(targetBuildLocation),
-                                                                Position(targetBuildLocation + supplyProviderType.tileSize()),
-                                                                Colors::Blue);
-                                        },
-                                        nullptr,  // condition
-                                        supplyProviderType.buildTime() + 100 );  // frames to run
-                                        */
-                // Order the builder to construct the supply structure
-                supplyBuilder->build( supplyProviderType, targetBuildLocation );
-              }
-            }
-            else
-            {
-              // Train the supply provider (Overlord) if the provider is not a structure
-              supplyBuilder->train( supplyProviderType );
-            }
-          } // closure: supplyBuilder is valid
-          else {
-            //Broodwar -> sendText("WTF! mainWorker was %d", mainWorker);
-
-          }
-        } // closure: insufficient supply
-      } // closure: failed to train idle unit
-
+      std::map<int,SCV*>::iterator iter = scvs.find(id);
+      if (iter == scvs.end()) {
+        _scvs.push_back( SCV(id, &world) );
+        scvs[id] = &_scvs.back();
+      }
+      scvs[id]->Update();
     }
+  } // closure: unit iterator
 }
+/*
   void FirstBot :: onUnitComplete(Unit unit)
   {
     if(unit->getType() == Terran_Barracks) Broodwar->sendText("Finally we got a Barracks");
@@ -174,3 +134,4 @@ void FirstBot :: onFrame() {
       }
     }
   }
+  */
