@@ -7,24 +7,33 @@
 class SCV;
 
 //------------------------------------
-
-#define CreateState(stateName) \
-   class stateName : public State<SCV> \
-   { \
-private: \
-  stateName(){} \
-  stateName(const stateName&); \
-  stateName& operator=(const stateName&); \
-public: \
-  static stateName* Instance(); \
-  virtual void Enter(SCV* scv); \
-  virtual void Execute(SCV* scv); \
-  virtual void Exit(SCV* scv); \
-  virtual std::string getName(); \
+class Idle : public State<SCV>
+{
+private:
+  Idle(){}
+  Idle(const Idle&);
+  Idle& operator=(const Idle&);
+public:
+  static Idle* Instance();
+  virtual void Enter(SCV* scv);
+  virtual void Execute(SCV* scv);
+  virtual void Exit(SCV* scv);
+  virtual std::string getName();
 };
 
-CreateState(Idle);
-CreateState(Mining);
+class Mining : public State<SCV>
+{
+private:
+  Mining(){}
+  Mining(const Mining&);
+  Mining& operator=(const Mining&);
+public: \
+  static Mining* Instance();
+  virtual void Enter(SCV* scv);
+  virtual void Execute(SCV* scv);
+  virtual void Exit(SCV* scv);
+  virtual std::string getName();
+};
 
 class GoingToBuildSupplyDepot : public State<SCV>
 {

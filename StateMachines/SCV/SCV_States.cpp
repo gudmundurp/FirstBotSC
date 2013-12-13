@@ -4,20 +4,18 @@
 #include <iostream>
 #include <string>
 
-#define Implement(state, name) \
-state* state::Instance() \
-{ \
-  static state instance; \
-  return &instance; \
-} \
-std::string state::getName() \
-{ \
-    return name; \
+//-------------------------------------------
+Idle* Idle::Instance()
+{
+  static Idle instance;
+  return &instance;
 }
 
+std::string Idle::getName()
+{
+    return "Idle";
+}
 
-//-------------------------------------------
-Implement(Idle, "Idle")
 void Idle::Enter(SCV* scv)
 {
    std::cout << "Entering idle state ...";
@@ -35,7 +33,15 @@ void Idle::Exit(SCV* scv)
 }
 
 //-------------------------------------------
-Implement(Mining,"Mining");
+Mining* Mining::Instance()
+{
+  static Mining instance;
+  return &instance;
+}
+std::string Mining::getName()
+{
+    return "Mining";
+}
 
 void Mining::Enter(SCV* scv)
 {
@@ -64,7 +70,16 @@ void Mining::Exit(SCV* scv)
     //No action required
 }
 
-Implement(GoingToBuildSupplyDepot,"GoingToBuildSupplyDepot")
+GoingToBuildSupplyDepot* GoingToBuildSupplyDepot::Instance()
+{
+  static GoingToBuildSupplyDepot instance;
+  return &instance;
+}
+std::string GoingToBuildSupplyDepot::getName()
+{
+    return "GoingToBuildSupplyDepot";
+}
+
 void GoingToBuildSupplyDepot::Enter(SCV* scv)
 {
     scv->reserveMinerals(100);
@@ -82,7 +97,16 @@ void GoingToBuildSupplyDepot::Exit(SCV* scv)
     scv->unreserveMinerals(100);
 }
 
-Implement(BuildingSupplyDepot,"BuildingSupplyDepot");
+BuildingSupplyDepot* BuildingSupplyDepot::Instance()
+{
+  static BuildingSupplyDepot instance;
+  return &instance;
+}
+std::string BuildingSupplyDepot::getName()
+{
+    return "BuildingSupplyDepot";
+}
+
 void BuildingSupplyDepot::Enter(SCV* scv)
 {
 }
