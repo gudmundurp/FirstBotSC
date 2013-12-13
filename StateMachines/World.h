@@ -2,21 +2,12 @@
 #define WORLD_H
 
 class World {
-private:
-    int minerals;
-    int supplies;
-    int usedSupplies;
-
 public:
-    World();
-    void setMinerals(int minerals);
-    void reduceReservedMinerals(int minerals);
-    void setSupplies(int supplies);
-    void setUsedSupplies(int usedSupplies);
+    virtual void reduceReservedMinerals(int minerals) =0;
 
-    void reserveMinerals(int minerals);
+    virtual void reserveMinerals(int minerals) =0;
 
-    int getMinerals();
+    virtual int getMinerals() =0;
 };
 
 #endif

@@ -99,6 +99,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MockWorld.h" />
     <ClInclude Include="SCV\SCV.h" />
     <ClInclude Include="SCV\SCV_States.h" />
     <ClInclude Include="State.h" />
@@ -106,9 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MockWorld.cpp" />
     <ClCompile Include="SCV\SCV.cpp" />
     <ClCompile Include="SCV\SCV_States.cpp" />
-    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

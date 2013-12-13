@@ -2,7 +2,7 @@
 
 #include "FirstBotSC.h"
 #include "SCV\SCV.h"
-#include "World.h"
+#include "WorldImpl.h"
 #include <map>
 
 using namespace BWAPI;
@@ -19,7 +19,7 @@ typedef std::shared_ptr<SCV> SharedSCVPointer;
 typedef std::map<int, SharedSCVPointer> SharedSCVPointerMap;
 
 SharedSCVPointerMap scvs;
-World world;
+WorldImpl world;
 
 int getAvailableMinerals() {
   int retInt = Broodwar->self()->minerals() - reservedMinerals;

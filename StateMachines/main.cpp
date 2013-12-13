@@ -3,11 +3,11 @@
 
 #include "SCV/SCV.h"
 #include "SCV/SCV_States.h"
-#include "World.h"
+#include "MockWorld.h"
 #include <iostream>
 
 TEST_CASE( "SCV starts in Idle state", "[SCV] [StartsInIdle]" ) {
-    World world;
+    MockWorld world;
     SCV scv(0,&world);
 
     REQUIRE( scv.GetStateName() == "Idle" );
@@ -18,7 +18,7 @@ TEST_CASE( "SCV starts in Idle state", "[SCV] [StartsInIdle]" ) {
 }
 
 TEST_CASE( "WHEN SCV executes Mining state then checks if it should Build Supply Depot", "[SCV] [MaybeBuildSD]" ) {
-    World world;
+    MockWorld world;
     SCV scv(0,&world);
 
     REQUIRE( scv.GetStateName() == "Idle" );
@@ -37,7 +37,7 @@ TEST_CASE( "WHEN SCV executes Mining state then checks if it should Build Supply
 SCENARIO( "SCV enters Build_Supply_Depot when 100 minerals and low supply", "[SCV] [EnterBuildSupplyDepotState]" ) {
 
     GIVEN( "100 minerals and 8/10 supply and an SCV in mining state" ) {
-        World world;
+        MockWorld world;
         world.setMinerals(100);
         world.setSupplies(10);
         world.setUsedSupplies(8);
