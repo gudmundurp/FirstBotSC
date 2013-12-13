@@ -15,8 +15,10 @@ int mainResourceDepot = 0;
 int reservedMinerals = 0;
 bool initialFrame = true;
 
-std::map<int, SCV*> scvs;
-std::vector<SCV> _scvs;
+typedef std::shared_ptr<SCV> SharedSCVPointer;
+typedef std::map<int, SharedSCVPointer> SharedSCVPointerMap;
+
+SharedSCVPointerMap scvs;
 World world;
 
 int getAvailableMinerals() {
@@ -85,10 +87,9 @@ void FirstBot :: onFrame() {
     {
       int id = u->getID();
 
-      std::map<int,SCV*>::iterator iter = scvs.find(id);
+      SharedSCVPointerMap::iterator iter = scvs.find(id);
       if (iter == scvs.end()) {
-        _scvs.push_back( SCV(id, &world) );
-        scvs[id] = &_scvs.back();
+        scvs[id] = SharedSCVPointer(new SCV(id, &world));
       }
       scvs[id]->Update();
     }

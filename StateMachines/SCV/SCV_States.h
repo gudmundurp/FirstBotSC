@@ -11,9 +11,7 @@ class Idle : public State<SCV>
 {
 private:
   static Idle* instance;
-  Idle(){}
-  Idle(const Idle&);
-  Idle& operator=(const Idle&);
+  Idle(): State<SCV>("Idle"){}
 public:
   static Idle* Instance();
   virtual void Enter(SCV* scv);
@@ -26,10 +24,8 @@ class Mining : public State<SCV>
 {
 private:
   static Mining* instance;
-  Mining(){}
-  Mining(const Mining&);
-  Mining& operator=(const Mining&);
-public: \
+  Mining(): State<SCV>("Mining"){}
+public:
   static Mining* Instance();
   virtual void Enter(SCV* scv);
   virtual void Execute(SCV* scv);
@@ -41,9 +37,7 @@ class GoingToBuildSupplyDepot : public State<SCV>
 {
 private:
     static GoingToBuildSupplyDepot* instance;
-     GoingToBuildSupplyDepot(){}
-     GoingToBuildSupplyDepot(const GoingToBuildSupplyDepot&);
-     GoingToBuildSupplyDepot& operator=(const GoingToBuildSupplyDepot&);
+     GoingToBuildSupplyDepot(): State<SCV>("GoingToBuildSupplyDepot"){}
 public:
   static GoingToBuildSupplyDepot* Instance();
   virtual void Enter(SCV* scv);
@@ -56,9 +50,7 @@ class BuildingSupplyDepot : public State<SCV>
 {
 private:
   static BuildingSupplyDepot* instance;
-     BuildingSupplyDepot(){}
-     BuildingSupplyDepot(const BuildingSupplyDepot&);
-     BuildingSupplyDepot& operator=(const BuildingSupplyDepot&);
+     BuildingSupplyDepot(): State<SCV>("BuildingSupplyDepot"){}
 public:
   static BuildingSupplyDepot* Instance();
   virtual void Enter(SCV* scv);
