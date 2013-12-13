@@ -4,11 +4,13 @@
 #include <iostream>
 #include <string>
 
+Idle* Idle::instance;
+
 //-------------------------------------------
 Idle* Idle::Instance()
 {
-  static Idle instance;
-  return &instance;
+  if(!instance) instance = new Idle();
+  return instance;
 }
 
 std::string Idle::getName()
@@ -33,11 +35,15 @@ void Idle::Exit(SCV* scv)
 }
 
 //-------------------------------------------
+Mining* Mining::instance;
+
+//-------------------------------------------
 Mining* Mining::Instance()
 {
-  static Mining instance;
-  return &instance;
+  if(!instance) instance = new Mining();
+  return instance;
 }
+
 std::string Mining::getName()
 {
     return "Mining";
@@ -70,11 +76,16 @@ void Mining::Exit(SCV* scv)
     //No action required
 }
 
+GoingToBuildSupplyDepot* GoingToBuildSupplyDepot::instance;
+
+//-------------------------------------------
 GoingToBuildSupplyDepot* GoingToBuildSupplyDepot::Instance()
 {
-  static GoingToBuildSupplyDepot instance;
-  return &instance;
+  if(!instance) instance = new GoingToBuildSupplyDepot();
+  return instance;
 }
+
+
 std::string GoingToBuildSupplyDepot::getName()
 {
     return "GoingToBuildSupplyDepot";
@@ -97,11 +108,16 @@ void GoingToBuildSupplyDepot::Exit(SCV* scv)
     scv->unreserveMinerals(100);
 }
 
+//-------------------------------------------
+BuildingSupplyDepot* BuildingSupplyDepot::instance;
+
+//-------------------------------------------
 BuildingSupplyDepot* BuildingSupplyDepot::Instance()
 {
-  static BuildingSupplyDepot instance;
-  return &instance;
+  if(!instance) instance = new BuildingSupplyDepot();
+  return instance;
 }
+
 std::string BuildingSupplyDepot::getName()
 {
     return "BuildingSupplyDepot";

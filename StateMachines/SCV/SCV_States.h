@@ -10,6 +10,7 @@ class SCV;
 class Idle : public State<SCV>
 {
 private:
+  static Idle* instance;
   Idle(){}
   Idle(const Idle&);
   Idle& operator=(const Idle&);
@@ -24,6 +25,7 @@ public:
 class Mining : public State<SCV>
 {
 private:
+  static Mining* instance;
   Mining(){}
   Mining(const Mining&);
   Mining& operator=(const Mining&);
@@ -38,6 +40,7 @@ public: \
 class GoingToBuildSupplyDepot : public State<SCV>
 {
 private:
+    static GoingToBuildSupplyDepot* instance;
      GoingToBuildSupplyDepot(){}
      GoingToBuildSupplyDepot(const GoingToBuildSupplyDepot&);
      GoingToBuildSupplyDepot& operator=(const GoingToBuildSupplyDepot&);
@@ -52,6 +55,7 @@ public:
 class BuildingSupplyDepot : public State<SCV>
 {
 private:
+  static BuildingSupplyDepot* instance;
      BuildingSupplyDepot(){}
      BuildingSupplyDepot(const BuildingSupplyDepot&);
      BuildingSupplyDepot& operator=(const BuildingSupplyDepot&);
