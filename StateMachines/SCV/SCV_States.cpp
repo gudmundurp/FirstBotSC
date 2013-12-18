@@ -94,6 +94,7 @@ std::string GoingToBuildSupplyDepot::getName()
 void GoingToBuildSupplyDepot::Enter(SCV* scv)
 {
     scv->reserveMinerals(100);
+    //world->buildSupplyDepot(scv->getID());
 }
 
 void GoingToBuildSupplyDepot::Execute(SCV* scv)

@@ -12,10 +12,11 @@ private:
 State<SCV>* _pCurrentState;
 bool _triedToBuildSupplyDepot;
 World* const _world;
+int _id;
 
 public:
-
-bool _startedBuilding;
+  int getID();
+  bool _startedBuilding;
   SCV(int id, World* world);
 
   void Update();

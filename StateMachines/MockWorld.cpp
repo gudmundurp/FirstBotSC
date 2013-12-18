@@ -23,3 +23,10 @@ void MockWorld::setUsedSupplies(int usedSupplies) {
 void MockWorld::reserveMinerals(int minerals) {
     this->minerals-=minerals;
 }
+
+void MockWorld::reserve(SCV*, const Resource){
+
+}
+void MockWorld::expend(SCV*){}
+void MockWorld::order(SCV*, const Object&){}
+void MockWorld::order(SCV*, const SupplyDepot&){}

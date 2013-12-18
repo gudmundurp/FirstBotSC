@@ -4,7 +4,13 @@
 #include <string>
 #include <cassert>
 
-SCV::SCV(int id, World* world) : _pCurrentState(Idle::Instance()), _world(world) {_triedToBuildSupplyDepot = false;}
+SCV::SCV(int id, World* world) :
+  _id(id),
+  _pCurrentState(Idle::Instance()),
+  _world(world)
+{
+  _triedToBuildSupplyDepot = false;
+}
 
 void SCV::Update()
 {

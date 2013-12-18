@@ -18,6 +18,14 @@ public:
     void reserveMinerals(int minerals);
 
     int getMinerals();
+
+    void buildSupplyDepot();
+
+    void reserve(SCV*, const Resource);
+    void expend(SCV*);
+    
+    void order(SCV*, const Object&);
+    void order(SCV*, const SupplyDepot&);
 };
 
 #endif
