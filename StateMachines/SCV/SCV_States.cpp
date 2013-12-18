@@ -106,7 +106,7 @@ void GoingToBuildSupplyDepot::Execute(SCV* scv)
 
 void GoingToBuildSupplyDepot::Exit(SCV* scv)
 {
-    scv->unreserveMinerals(100);
+    scv->unreserveMinerals();
 }
 
 //-------------------------------------------

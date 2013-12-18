@@ -30,7 +30,7 @@ public:
   void startedBuilding();
 
   void reserveMinerals(int minerals);
-  void unreserveMinerals(int minerals);
+  void unreserveMinerals();
 
   bool DidTryToBuildSupplyDepot();
   std::string GetStateName();

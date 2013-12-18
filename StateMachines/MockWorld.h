@@ -6,10 +6,13 @@
 class MockWorld : public World {
 private:
     int minerals;
+    int reserved;
     int supplies;
     int usedSupplies;
 
 public:
+    MockWorld();
+
     void setMinerals(int minerals);
     void reduceReservedMinerals(int minerals);
     void setSupplies(int supplies);

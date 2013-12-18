@@ -73,10 +73,10 @@ void SCV::startedBuilding()
 
 void SCV::reserveMinerals(int minerals)
 {
-    _world->reserveMinerals(100);
+    _world->reserve(this,100);
 }
 
-void SCV::unreserveMinerals(int minerals)
+void SCV::unreserveMinerals()
 {
-    _world->reduceReservedMinerals(100);
+    _world->expend(this);
 }

@@ -55,7 +55,7 @@ SCENARIO( "SCV enters Build_Supply_Depot when 100 minerals and low supply", "[SC
             REQUIRE( scv.GetStateName() == B_SD );
 
             INFO("SCV should now have extracted 100 minerals from the bank");
-            REQUIRE(0 == scv.checkMinerals());
+            REQUIRE(0 == world.getMinerals());
 
             INFO("SCV should start building now ...");
 
