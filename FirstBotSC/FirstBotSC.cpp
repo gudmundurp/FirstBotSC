@@ -4,6 +4,7 @@
 #include "SCV\SCV.h"
 #include "WorldImpl.h"
 #include <map>
+#include <ctime>
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
@@ -52,6 +53,12 @@ void FirstBot :: onFrame() {
   Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
   Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
 
+  std::time_t t = std::time(nullptr);
+  char buf[100];
+  std::size_t len = std::strftime(buf, (sizeof buf) - 1, "%c %Z", std::gmtime(&t));
+  buf[len] = 0;
+  Broodwar->drawTextScreen(200, 80, "Hello worls: %s", buf);
+
   // Return if the game is a replay or is paused
   if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
     return;
@@ -92,47 +99,14 @@ void FirstBot :: onFrame() {
         scvs[id] = SharedSCVPointer(new SCV(id, &world));
       }
       scvs[id]->Update();
+    } else if ( u->getType().isResourceDepot() ) // A resource depot is a Command Center, Nexus, or Hatchery
+    {
+
+      // Order the depot to construct more workers! But only when it is idle.
+      if ( u->isIdle() )
+      {
+         u->train(u->getType().getRace().getWorker());
+      }
     }
   } // closure: unit iterator
 }
-/*
-  void FirstBot :: onUnitComplete(Unit unit)
-  {
-    if(unit->getType() == Terran_Barracks) Broodwar->sendText("Finally we got a Barracks");
-
-    if( unit->getPlayer() != Broodwar->self() ) return;
-
-    if(unit->getType().isWorker()) {
-      workerSet.insert(unit);
-
-      mainWorker = unit->getID();
-
-      unit->gather(unit->getClosestUnit(Filter::IsMineralField));
-
-      std::stringstream ss;
-
-      ss << "We have " << workerSet.size() << " workers!";
-
-      Broodwar->sendText(ss.str().c_str());
-    } else if(unit->getType().isBuilding()) {
-      if(unit->getType().isResourceDepot()){
-          mainResourceDepot = unit->getID();
-          unit->train(unit->getType().getRace().getWorker());
-      }
-      if (Broodwar->elapsedTime() >= 10) {
-          Broodwar->sendText("When the fuck is this actually called?");
-          reservedMinerals -= unit->getType().mineralPrice();
-      }
-    } else {
-      switch(unit->getType()) {
-    case Terran_Marine:
-    case Zerg_Zergling:
-    case Protoss_Zealot:
-      Broodwar->sendText("Basic warrior created");
-      return;
-    default:
-      break;
-      }
-    }
-  }
-  */

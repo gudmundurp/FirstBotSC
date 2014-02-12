@@ -14,21 +14,23 @@ public:
     MockWorld();
 
     void setMinerals(int minerals);
-    void reduceReservedMinerals(int minerals);
+
     void setSupplies(int supplies);
     void setUsedSupplies(int usedSupplies);
-
-    void reserveMinerals(int minerals);
 
     int getMinerals();
 
     void buildSupplyDepot();
 
-    void reserve(SCV*, const Resource);
-    void expend(SCV*);
+    World::ResourceTicket reserve(const Resource);
+    void expend(ResourceTicket);
     
-    void order(SCV*, const Object&);
-    void order(SCV*, const SupplyDepot&);
+    void order(SCV*, Object);
+
+    bool startedBuilding(SCV*);
+    void startMining(SCV*);
+
+    int unusedSupply();
 };
 
 #endif

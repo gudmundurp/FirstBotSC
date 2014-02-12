@@ -6,23 +6,24 @@ class SCV;
 class World {
 public:
     typedef int Resource;
+    typedef Resource ResourceTicket;
 
-    class Object {
-    };
-    class SupplyDepot : public Object{
-    };
-
-    virtual void reduceReservedMinerals(int minerals) =0;
-
-    virtual void reserveMinerals(int minerals) =0;
+    typedef enum  {
+        SupplyDepot
+    } Object;
 
     virtual int getMinerals() =0;
 
-    virtual void reserve(SCV*, const Resource) =0;
-    virtual void expend(SCV*) =0;
+    virtual ResourceTicket reserve(const Resource) =0;
+    virtual void expend(ResourceTicket) =0;
 
-    virtual void order(SCV*, const Object&) =0;
-    virtual void order(SCV*, const SupplyDepot&) =0;
+    virtual void order(SCV*, Object) =0;
+
+    virtual bool startedBuilding(SCV*) =0;
+
+    virtual void startMining(SCV*) = 0;
+
+    virtual int unusedSupply() = 0;
 };
 
 #endif

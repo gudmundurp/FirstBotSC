@@ -1,8 +1,11 @@
 #include "SCV_States.h"
 #include "../State.h"
 #include "SCV.h"
+#include "BWAPI.h"
 #include <iostream>
 #include <string>
+
+#define LOG(state, action, unit) do { BWAPI::Broodwar->printf("%08d %s %s", unit->getID(), state, action); } while(false)
 
 Idle* Idle::instance;
 
@@ -51,28 +54,27 @@ std::string Mining::getName()
 
 void Mining::Enter(SCV* scv)
 {
-    //Gather gas/minerals
+    LOG("Mining", "Enter", scv);
 }
 
 void Mining::Execute(SCV* scv)
 {
-    scv->TryToBuildSupplyDepot();
-    scv->TryToBuildSupplyDepot();
-    scv->checkMinerals() >= 100 &&
-    scv->unusedSupply() <= 2
-    ? scv->ChangeState(GoingToBuildSupplyDepot::Instance())
-    : scv->nothing();
-    //check if LackingSupply and if minerals > 100
-    //   then Build Supply Depot
+    //LOG("Mining", "Execute", scv);
+    if (scv->checkMinerals() >= 100 && scv->unusedSupply() <= 6) {
+        scv->reserveMinerals(100);
+        scv->ChangeState(GoingToBuildSupplyDepot::Instance());
     //else if !LackingSupply and
     //        SuppDep >=
     //        Minerals >= 150
     //   then Build Barracks
-    //else nothing
+    } else {
+        scv->startMining();
+    }
 }
 
 void Mining::Exit(SCV* scv)
 {
+    LOG("Mining", "Exit", scv);
     //No action required
 }
 
@@ -93,20 +95,30 @@ std::string GoingToBuildSupplyDepot::getName()
 
 void GoingToBuildSupplyDepot::Enter(SCV* scv)
 {
-    scv->reserveMinerals(100);
-    //world->buildSupplyDepot(scv->getID());
+    LOG("GoingToBuildSupplyDepot", "Enter", scv);
+    World* world = scv->getWorld();
+
+    world->order(scv, World::SupplyDepot);
 }
 
 void GoingToBuildSupplyDepot::Execute(SCV* scv)
 {
-    if(scv->_startedBuilding) {
-        scv->ChangeState(BuildingSupplyDepot::Instance());
+    //LOG("GoingToBuildSupplyDepot", "Execute", scv);
+    BWAPI::Unit scv_bw = BWAPI::Broodwar->getUnit(scv->getID());
+    int x = scv_bw->getOrder();
+    if(scv_bw->getBuildUnit()) {
+        scv->unreserveMinerals();
+    } else if(!scv_bw->isConstructing()) {
+        scv->ChangeState(Mining::Instance());
+    } else {
+        // Is constructing or on way to site.
+        int i=0;
     }
 }
 
 void GoingToBuildSupplyDepot::Exit(SCV* scv)
 {
-    scv->unreserveMinerals();
+LOG("GoingToBuildSupplyDepot", "Exit", scv);
 }
 
 //-------------------------------------------

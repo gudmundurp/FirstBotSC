@@ -2,21 +2,32 @@
 #define WORLDIMPL_H
 
 #include "World.h"
+#include "BWAPI/Game.h"
+#include "BWAPI/Player.h"
 
 class WorldImpl : public World {
 
+  typedef BWAPI::PlayerInterface Player;
+  typedef BWAPI::Game Game;
+
 public:
-void reduceReservedMinerals(int minerals) ;
+    WorldImpl();
 
-void reserveMinerals(int minerals) ;
+    int getMinerals() ;
 
-int getMinerals() ;
+    ResourceTicket reserve(const Resource);
+    void expend(ResourceTicket);
 
-void reserve(SCV*, const Resource) ;
-void expend(SCV*) ;
+    void order(SCV*, Object);
 
-void order(SCV*, const Object&) ;
-void order(SCV*, const SupplyDepot&) ;
+    void startMining(SCV*);
+
+    bool startedBuilding(SCV*);
+
+    int unusedSupply();
+
+private:
+    int reservedMinerals;
 };
 
 #endif

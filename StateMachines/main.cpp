@@ -58,9 +58,6 @@ SCENARIO( "SCV enters Build_Supply_Depot when 100 minerals and low supply", "[SC
             REQUIRE(0 == world.getMinerals());
 
             INFO("SCV should start building now ...");
-
-            scv.startedBuilding();
-
             scv.Update();
 
             INFO("SCV should now be in BuildingSupplyDepot state");

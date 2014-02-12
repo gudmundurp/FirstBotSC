@@ -16,7 +16,6 @@ int _id;
 
 public:
   int getID();
-  bool _startedBuilding;
   SCV(int id, World* world);
 
   void Update();
@@ -27,10 +26,14 @@ public:
   int checkMinerals();
   int unusedSupply();
   void nothing();
-  void startedBuilding();
+  void startMining();
+  bool startedBuilding();
 
   void reserveMinerals(int minerals);
   void unreserveMinerals();
+  void buildSupplyDepot();
+
+  World* getWorld();
 
   bool DidTryToBuildSupplyDepot();
   std::string GetStateName();

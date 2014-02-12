@@ -12,10 +12,6 @@ void MockWorld::setMinerals(int minerals) {
     this->minerals = minerals;
 }
 
-void MockWorld::reduceReservedMinerals(int minerals) {
-      this->minerals -= minerals;
-}
-
 int MockWorld::getMinerals() {
     return minerals - reserved;
 }
@@ -28,18 +24,24 @@ void MockWorld::setUsedSupplies(int usedSupplies) {
     this->usedSupplies = usedSupplies;
 }
 
-void MockWorld::reserveMinerals(int minerals) {
-    this->minerals-=minerals;
-}
-
-void MockWorld::reserve(SCV*, const Resource resource){
+World::ResourceTicket MockWorld::reserve(const Resource resource){
   reserved += resource;
+  return resource;
 }
 
-void MockWorld::expend(SCV*){
-  this->minerals -= this->reserved;
+void MockWorld::expend(ResourceTicket ticket){
   this->reserved = 0;
 }
 
-void MockWorld::order(SCV*, const Object&){}
-void MockWorld::order(SCV*, const SupplyDepot&){}
+void MockWorld::order(SCV*, Object){}
+
+
+bool MockWorld::startedBuilding(SCV*) {
+  return false;
+}
+
+void MockWorld::startMining(SCV*) {}
+
+int unusedSupply() {
+    return 2;
+}

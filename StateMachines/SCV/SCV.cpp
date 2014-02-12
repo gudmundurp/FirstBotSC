@@ -12,6 +12,8 @@ SCV::SCV(int id, World* world) :
   _triedToBuildSupplyDepot = false;
 }
 
+int  SCV::getID() { return _id; }
+
 void SCV::Update()
 {
   if (_pCurrentState)
@@ -58,7 +60,7 @@ int SCV::checkMinerals()
 
 int SCV::unusedSupply()
 {
-    return 2;
+    return _world->unusedSupply();
 }
 
 void SCV::nothing()
@@ -66,17 +68,29 @@ void SCV::nothing()
 
 }
 
-void SCV::startedBuilding()
+bool SCV::startedBuilding()
 {
-    this->_startedBuilding = true;
+    return _world->startedBuilding(this);
 }
 
 void SCV::reserveMinerals(int minerals)
 {
-    _world->reserve(this,100);
+    _world->reserve(100);
 }
 
 void SCV::unreserveMinerals()
 {
-    _world->expend(this);
+    _world->expend(100);
+}
+
+void SCV::buildSupplyDepot() {
+    
+}
+
+void SCV::startMining() {
+    _world->startMining(this);
+}
+
+World* SCV::getWorld() {
+    return _world;
 }
