@@ -54,17 +54,17 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsManaged>false</CompileAsManaged>
-      <AdditionalIncludeDirectories>$(SolutionDir)\StateMachines;%BWAPI_INSTALL_DIR%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\StateMachines;D:\src\bwapi\bwapi\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>BWAPId.lib;StateMachines.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BWAPI.lib;StateMachines.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\;%BWAPI_INSTALL_DIR%\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\;D:\src\bwapi\bwapi\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y $(TargetDir)\\$(TargetFileName) "d:\\Program Files\\Starcraft\\bwapi-data\\AI\\$(TargetFileName)"</Command>

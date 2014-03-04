@@ -1,12 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirstBotSC", "FirstBotSC\FirstBotSC.vcxproj", "{53E36BD8-E8E9-4D35-ABCC-FFE9EE4981EA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D} = {B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StateMachines", "StateMachines\StateMachine.vcxproj", "{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AcceptanceTestBot", "AcceptanceTestBot\AcceptanceTestBot.vcxproj", "{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,12 @@ Global
 		{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}.Release|Win32.Build.0 = Release|Win32
 		{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}.StateMachineExecutable|Win32.ActiveCfg = Executable|Win32
 		{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}.StateMachineExecutable|Win32.Build.0 = Executable|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.Debug|Win32.Build.0 = Debug|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.Release|Win32.ActiveCfg = Release|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.Release|Win32.Build.0 = Release|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.StateMachineExecutable|Win32.ActiveCfg = Release|Win32
+		{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}.StateMachineExecutable|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,33 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\SCV">
-      <UniqueIdentifier>{91213a62-827f-4b91-8f70-d80644fed759}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\SCV">
-      <UniqueIdentifier>{cde26937-cc0e-4112-b7fa-cd83960498b0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="State.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SCV\SCV_States.h">
-      <Filter>Header Files\SCV</Filter>
-    </ClInclude>
-    <ClInclude Include="SCV\SCV.h">
-      <Filter>Header Files\SCV</Filter>
-    </ClInclude>
+    <ClCompile Include="Dll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AcceptanceTestBot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SCV\SCV.cpp">
-      <Filter>Source Files\SCV</Filter>
-    </ClCompile>
-    <ClCompile Include="SCV\SCV_States.cpp">
-      <Filter>Source Files\SCV</Filter>
-    </ClCompile>
+    <ClInclude Include="AcceptanceTestBot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

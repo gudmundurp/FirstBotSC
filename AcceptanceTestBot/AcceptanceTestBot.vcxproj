@@ -9,30 +9,22 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Executable|Win32">
-      <Configuration>Executable</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B748C2FB-01C6-4E0A-ADBC-C5BE2539ED7D}</ProjectGuid>
-    <RootNamespace>StateMachine</RootNamespace>
-    <ProjectName>StateMachines</ProjectName>
+    <ProjectGuid>{C92947AC-5CC3-491F-A7E2-B7F1F5E197A1}</ProjectGuid>
+    <RootNamespace>AcceptanceTestBot</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Executable|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -42,41 +34,23 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Executable|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetExt>.lib</TargetExt>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Executable|Win32'">
-    <TargetExt>.exe</TargetExt>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>Catch\include;D:\src\bwapi\bwapi\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\src\bwapi\bwapi\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Executable|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>Catch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>BWAPId.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BWAPI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\src\bwapi\bwapi\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,30 +59,24 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\src\bwapi\bwapi\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>D:\src\bwapi\bwapi\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BWAPI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='StateMachineExecutable|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>Catch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="SCV\SCV.h" />
-    <ClInclude Include="SCV\SCV_States.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="World.h" />
+    <ClCompile Include="Dll.cpp" />
+    <ClCompile Include="AcceptanceTestBot.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SCV\SCV.cpp" />
-    <ClCompile Include="SCV\SCV_States.cpp" />
+    <ClInclude Include="AcceptanceTestBot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
