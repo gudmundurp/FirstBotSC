@@ -61,7 +61,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>Catch\include;D:\src\bwapi\bwapi\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

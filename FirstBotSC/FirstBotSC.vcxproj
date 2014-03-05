@@ -54,13 +54,13 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsManaged>false</CompileAsManaged>
       <AdditionalIncludeDirectories>.;$(SolutionDir)\StateMachines;D:\src\bwapi\bwapi\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>BWAPI.lib;StateMachines.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BWAPId.lib;StateMachines.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>

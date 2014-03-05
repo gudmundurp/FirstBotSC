@@ -1,6 +1,7 @@
 // This is the AcceptanceTestBot DLL file.
 
 #include "AcceptanceTestBot.h"
+#include <algorithm>
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
@@ -16,6 +17,9 @@ bool initialFrame = true;
 void AcceptanceTestBot :: onStart() {
   Broodwar->sendText("Hello world!");
 
+  Broodwar->setLocalSpeed(0);
+  Broodwar->setFrameSkip(16);
+
   Broodwar->enableFlag(Flag::UserInput);
 
   // Uncomment the following line and the bot will know about everything through the fog of war (cheat).
@@ -28,13 +32,15 @@ void AcceptanceTestBot :: onStart() {
 
 typedef enum { PENDING, FAILED, SUCCESS } TestResult;
 
-TestResult result = PENDING;
+std::vector<TestResult> testArray(2, PENDING);
 
-void AcceptanceTestBot :: onFrame() {
-    // Called once every game frame
+#define SUPPLY_DEPOT_TEST 0
+#define BARRACKS_TEST 1
 
-	const char* testResult;
-	switch (result) {
+void printTestResult(TestResult res, int yPos) {
+	
+		const char* testResult;
+	switch (res) {
 	case SUCCESS:
 		testResult = "Success";
 		break;
@@ -47,30 +53,37 @@ void AcceptanceTestBot :: onFrame() {
 		break;
 	}
 
-	Broodwar->drawTextScreen(300, 0,  "Test result: %s", testResult );
+	Broodwar->drawTextScreen(300, yPos,  "Test result: %s", testResult );
+}
 
-  // Return if the game is a replay or is paused
-  if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
+void printTestResults() {
+	for (auto iter = testArray.begin(); iter != testArray.end(); ++iter) {
+		printTestResult(*iter, 20 * (iter - testArray.begin()));
+	}
+	
+}
+
+void AcceptanceTestBot :: onFrame() {
+  printTestResults();
+
+  if ( Broodwar->isPaused() || !Broodwar->self() )
     return;
 
-  // Prevent spamming by only running our onFrame once every number of latency frames.
-  // Latency frames are the number of frames before commands are processed.
-  if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
-    return;
-
-  if ( Broodwar->getFrameCount() >= (int)((3*60*1000)/42.0 + 0.5) ) {
-	  Broodwar->leaveGame();
+  if ( Broodwar->getFrameCount() >= (int)((30*1000)/42.0 + 0.5) ) {
+	  std::for_each(testArray.begin(), testArray.end(),
+		  [](TestResult& res) -> void {if (res == PENDING) res = FAILED;});
   }
 
-  // Iterate through all the units that we own
   Unitset myUnits = Broodwar->getAllUnits();
-  for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
+  for ( auto u = myUnits.begin(); u != myUnits.end(); ++u )
   {
 	  if( u->getType() == UnitTypes::Terran_Supply_Depot ) {
-	       Broodwar->sendText("Supply Depot! Awesome!");     
+	       Broodwar->sendText("%s", "Supply Depot! Awesome!");     
+		   testArray[SUPPLY_DEPOT_TEST] = SUCCESS;
 	  }
 	  if( u->getType() == UnitTypes::Terran_Barracks ) {
-	       Broodwar->sendText("Barracks! Awesome!");     
+	       Broodwar->sendText("%s", "Barracks! Awesome!");     
+		   testArray[BARRACKS_TEST] = SUCCESS;
 	  }
-  } // closure: unit iterator
+  }
 }

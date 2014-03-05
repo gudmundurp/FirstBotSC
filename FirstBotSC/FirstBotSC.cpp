@@ -33,6 +33,11 @@ int getAvailableMinerals() {
 
 void FirstBot :: onStart() {
   Broodwar->sendText("Hello world!");
+  
+  Broodwar->setLocalSpeed(0);
+  //Broodwar->setFrameSkip(16);
+  Broodwar->setGUI(false);
+  
 
   Broodwar->enableFlag(Flag::UserInput);
 
@@ -57,7 +62,7 @@ void FirstBot :: onFrame() {
   char buf[100];
   std::size_t len = std::strftime(buf, (sizeof buf) - 1, "%c %Z", std::gmtime(&t));
   buf[len] = 0;
-  Broodwar->drawTextScreen(200, 80, "Hello worls: %s", buf);
+  Broodwar->drawTextScreen(200, 80, "Hello world: %s", buf);
 
   // Return if the game is a replay or is paused
   if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
