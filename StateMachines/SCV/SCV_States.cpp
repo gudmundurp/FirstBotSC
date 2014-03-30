@@ -1,11 +1,15 @@
 #include "SCV_States.h"
 #include "../State.h"
 #include "SCV.h"
-#include "BWAPI.h"
 #include <iostream>
 #include <string>
 
-#define LOG(state, action, unit) do { BWAPI::Broodwar->printf("%08d %s %s", unit->getID(), state, action); } while(false)
+#ifndef FIRSTBOT_UNIT_TEST
+   #include "BWAPI.h"
+   #define LOG(state, action, unit) do { BWAPI::Broodwar->printf("%08d %s %s", unit->getID(), state, action); } while(false)
+#else
+   #define LOG(state, action, unit) 
+#endif
 
 Idle* Idle::instance;
 
@@ -104,21 +108,18 @@ void GoingToBuildSupplyDepot::Enter(SCV* scv)
 void GoingToBuildSupplyDepot::Execute(SCV* scv)
 {
     //LOG("GoingToBuildSupplyDepot", "Execute", scv);
-    BWAPI::Unit scv_bw = BWAPI::Broodwar->getUnit(scv->getID());
-    int x = scv_bw->getOrder();
-    if(scv_bw->getBuildUnit()) {
+    if(scv->hasBuildUnit()) {
         scv->unreserveMinerals();
-    } else if(!scv_bw->isConstructing()) {
+    } else if(!scv->isConstructing()) {
         scv->ChangeState(Mining::Instance());
     } else {
         // Is constructing or on way to site.
-        int i=0;
     }
 }
 
 void GoingToBuildSupplyDepot::Exit(SCV* scv)
 {
-LOG("GoingToBuildSupplyDepot", "Exit", scv);
+	LOG("GoingToBuildSupplyDepot", "Exit", scv);
 }
 
 //-------------------------------------------

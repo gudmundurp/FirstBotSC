@@ -38,6 +38,17 @@ public:
   bool DidTryToBuildSupplyDepot();
   std::string GetStateName();
 
+
+  /////////////////////
+
+
+  bool hasBuildUnit();
+  bool isConstructing();
+
+private:
+#ifdef FIRSTBOT_UNIT_TEST
+	int unittest_state;
+#endif
 };
 
 #endif // SCV_H

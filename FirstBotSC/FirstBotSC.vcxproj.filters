@@ -24,6 +24,12 @@
     <ClInclude Include="WorldImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Oracle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleStrategizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstBotSC.cpp">
@@ -33,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WorldImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleStrategizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
