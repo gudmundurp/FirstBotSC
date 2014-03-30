@@ -1,5 +1,6 @@
 #include "SCV_States.h"
 #include "SCV.h"
+#include "BWAPI.h"
 #include "../World.h"
 #include <string>
 #include <cassert>
@@ -93,4 +94,14 @@ void SCV::startMining() {
 
 World* SCV::getWorld() {
     return _world;
+}
+
+bool SCV::hasBuildUnit() {
+    BWAPI::Unit scv_bw = BWAPI::Broodwar->getUnit(getID());
+	return scv_bw->getBuildUnit();
+}
+
+bool SCV::isConstructing() {
+	BWAPI::Unit scv_bw = BWAPI::Broodwar->getUnit(getID());
+	return scv_bw->isConstructing();
 }

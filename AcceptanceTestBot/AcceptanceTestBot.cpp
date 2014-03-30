@@ -78,11 +78,11 @@ void AcceptanceTestBot :: onFrame() {
   for ( auto u = myUnits.begin(); u != myUnits.end(); ++u )
   {
 	  if( u->getType() == UnitTypes::Terran_Supply_Depot ) {
-	       Broodwar->sendText("%s", "Supply Depot! Awesome!");     
+	       //Broodwar->sendText("%s", "Supply Depot! Awesome!");     
 		   testArray[SUPPLY_DEPOT_TEST] = SUCCESS;
 	  }
 	  if( u->getType() == UnitTypes::Terran_Barracks ) {
-	       Broodwar->sendText("%s", "Barracks! Awesome!");     
+	       //Broodwar->sendText("%s", "Barracks! Awesome!");     
 		   testArray[BARRACKS_TEST] = SUCCESS;
 	  }
   }

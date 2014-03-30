@@ -42,6 +42,6 @@ bool MockWorld::startedBuilding(SCV*) {
 
 void MockWorld::startMining(SCV*) {}
 
-int unusedSupply() {
+int MockWorld::unusedSupply() {
     return 2;
 }

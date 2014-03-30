@@ -1,6 +1,7 @@
 // This is the main DLL file.
 
 #include "FirstBotSC.h"
+#include <SimpleStrategizer.h>
 #include "SCV\SCV.h"
 #include "WorldImpl.h"
 #include <map>
@@ -10,6 +11,7 @@ using namespace BWAPI;
 using namespace UnitTypes::Enum;
 using namespace Filter;
 
+SimpleStrategizer oracle;
 Unitset workerSet;
 int mainWorker = 0;
 int mainResourceDepot = 0;
@@ -21,6 +23,31 @@ typedef std::map<int, SharedSCVPointer> SharedSCVPointerMap;
 
 SharedSCVPointerMap scvs;
 WorldImpl world;
+
+Unit getBestWorker() {
+  Unitset myUnits = Broodwar->self()->getUnits();
+	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
+	   if ( u->getType().isWorker() )
+       {
+           return *u;
+       }
+    }
+	return 0;
+}
+
+void build(BWAPI::UnitType type) {
+		using namespace BWAPI;
+    using namespace Filter;
+
+    Unit scv_bw = getBestWorker();
+	if(scv_bw) {
+        TilePosition targetBuildLocation = Broodwar->getBuildLocation(type, scv_bw->getTilePosition());
+        if ( targetBuildLocation )
+        {
+            scv_bw->build( type, targetBuildLocation );
+        }
+    }
+}
 
 int getAvailableMinerals() {
   int retInt = Broodwar->self()->minerals() - reservedMinerals;
@@ -51,7 +78,7 @@ void FirstBot :: onStart() {
 
 void FirstBot :: onFrame() {
     // Called once every game frame
-
+  
   // Display the game frame rate as text in the upper left area of the screen
   Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
   Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
@@ -72,6 +99,18 @@ void FirstBot :: onFrame() {
   // Latency frames are the number of frames before commands are processed.
   if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
     return;
+  /*
+  Advice advice = oracle.giveAdvice(
+	  Broodwar->self()->minerals(),
+	  Broodwar->self()->gas(),
+	  Broodwar->self()->supplyUsed(),
+	  Broodwar->self()->supplyTotal());
+  if(advice == BuildSD) {
+	build(UnitTypes::Terran_Supply_Depot);
+  }
+  if(advice == BuildBarracks) {
+	build(UnitTypes::Terran_Barracks);
+  }*/
 
   // Iterate through all the units that we own
   Unitset myUnits = Broodwar->self()->getUnits();

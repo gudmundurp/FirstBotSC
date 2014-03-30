@@ -98,12 +98,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FirstBotSC.h" />
+    <ClInclude Include="Oracle.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SimpleStrategizer.h" />
     <ClInclude Include="WorldImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dll.cpp" />
     <ClCompile Include="FirstBotSC.cpp" />
+    <ClCompile Include="SimpleStrategizer.cpp" />
     <ClCompile Include="WorldImpl.cpp" />
   </ItemGroup>
   <ItemGroup>

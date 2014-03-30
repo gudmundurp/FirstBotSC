@@ -17,7 +17,7 @@ TEST_CASE( "SCV starts in Idle state", "[SCV] [StartsInIdle]" ) {
     REQUIRE( scv.GetStateName() == "Mining" );
 }
 
-TEST_CASE( "WHEN SCV executes Mining state then checks if it should Build Supply Depot", "[SCV] [MaybeBuildSD]" ) {
+TEST_CASE( "WHEN SCV executes Mining state it checks if it should Build Supply Depot", "[SCV] [MaybeBuildSD]" ) {
     MockWorld world;
     SCV scv(0,&world);
 
