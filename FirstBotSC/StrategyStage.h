@@ -3,8 +3,11 @@
 #include <string>
 
 #include "Oracle.h"
+#include "BWAPINice.h"
 
 namespace strategy {
+
+using namespace BWAPINice;
 
 class StrategyStage
 {
@@ -26,6 +29,9 @@ protected:
     Supply GetMaximum();
 	Minerals GetMinerals();
     Gas GetGas();
+    int GetUnitCount(UnitTypeEnum unitTypeID);
+
+    bool _haveIssuedMyAdvice;
 
     void Done();
 

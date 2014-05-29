@@ -1,10 +1,12 @@
 #include "StrategyStage.h"
 #include <BWAPI.h>
 
+using namespace BWAPI;
+
 namespace strategy {
 
 StrategyStage::StrategyStage(const std::string& name)
-    : _name(name), _isDone(false)
+    : _name(name), _isDone(false), _haveIssuedMyAdvice(false)
 {
 }
 
@@ -48,5 +50,18 @@ void StrategyStage::Done()
 {
     _isDone = true;
 }
+
+ int StrategyStage::GetUnitCount(UnitTypeEnum unitTypeID) 
+ {
+    int count = 0;
+  Unitset myUnits = Broodwar->self()->getUnits();
+	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
+
+        if ( u->getType() == unitTypeID ) {
+            count++;
+        }
+    }
+    return count;
+ }
 
 }

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "onlineunittypetestcase.h"
-#include "BWAPI.h"
+#include "../FirstBotSC/BWAPINice.h"
 
 namespace testcase {
 namespace unittestcase {
 
-typedef BWAPI::UnitTypes::Enum::Enum UnitTypeEnum;
+using namespace BWAPINice;
 
 class UnitCreated : public OnlineUnitTypeTestCase
 {

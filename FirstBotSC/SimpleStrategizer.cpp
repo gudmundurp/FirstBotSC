@@ -1,52 +1,65 @@
 #include "SimpleStrategizer.h"
 #include "BuildFirstSupplyDepot.h"
+#include "BuildFirstBarracks.h"
+#include "BuildSecondBarracks.h"
+#include "BuildSecondSupplyDepot.h"
 #include <BWAPI.h>
 
 using namespace strategy;
 
-SimpleStrategizer::SimpleStrategizer() {
-	_buildOrderStep = 0;
+SimpleStrategizer::SimpleStrategizer()
+    : _buildOrderStep(0) 
+{
+    ChangeStage(0);
+}
+
+void SimpleStrategizer::ChangeStage(Step stage) {
+    _buildOrderStep = stage;
+    BWAPI::Broodwar->printf("Build step: %d", _buildOrderStep);
 }
 
 Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current, Supply maximum) {
-	BWAPI::Broodwar->printf("Build step: %d",_buildOrderStep);
 
 	switch(_buildOrderStep) {
 	case(0): {
         BuildFirstSupplyDepot stage1;
         Advice advice = stage1.GetAdvice();
         if (stage1.isDone()) {
-            ++_buildOrderStep;
+            ChangeStage(1);
         }
         return advice;
     }
 	break;
 
-	case(1):
-	if(current>=22 && maximum==36) {
-		if(minerals >=150) {
-			_buildOrderStep++;
-		    return BuildBarracks;
-	    }
-	}
+	case(1): {
+        BuildFirstBarracks stage2;
+        Advice advice = stage2.GetAdvice();
+        if (stage2.isDone()) {
+            ChangeStage(2);
+        }
+        return advice;
+    }
 	break;
 
-	case(2):
-	if(current>=26 && maximum==36) {
-		if(minerals >=150) {
-			_buildOrderStep++;
-		    return BuildBarracks;
-	    }
-	}
+	case(2): {
+        BuildSecondBarracks stage3;
+        Advice advice = stage3.GetAdvice();
+        if (stage3.isDone()) {
+            ChangeStage(3);
+        }
+        return advice;
+    }
 	break;
 
-	case(3):
-	    if(current >= 30 && maximum == 36) {
-	        if(minerals >=100) {
-	            _buildOrderStep++;
-	            return BuildSD;
-	        }
-	    }
+
+	case(3): {
+        BuildSecondSupplyDepot stage4;
+        Advice advice = stage4.GetAdvice();
+        if (stage4.isDone()) {
+            ChangeStage(4);
+        }
+        return advice;
+    }
 	break;
 
 	default:

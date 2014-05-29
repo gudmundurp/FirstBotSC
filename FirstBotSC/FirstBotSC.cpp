@@ -11,7 +11,7 @@ using namespace BWAPI;
 using namespace UnitTypes::Enum;
 using namespace Filter;
 
-SimpleStrategizer oracle;
+SimpleStrategizer *oracle;
 Unitset workerSet;
 int mainWorker = 0;
 int mainResourceDepot = 0;
@@ -27,16 +27,33 @@ WorldImpl world;
 Unit findTrainer(UnitType type) {
   Unitset myUnits = Broodwar->self()->getUnits();
 	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
-	   if ( u->getType() == type )
-       {
-           return *u;
-       }
+        // Ignore the unit if it no longer exists
+        // Make sure to include this block when handling any Unit pointer!
+        if ( !u->exists() )
+            continue;
+
+        // Ignore the unit if it has one of the following status ailments
+        if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
+            continue;
+
+        // Ignore the unit if it is in one of the following states
+        if ( u->isLoaded() || !u->isPowered() || u->isStuck() )
+            continue;
+
+        // Ignore the unit if it is incomplete or busy constructing
+        if ( !u->isCompleted() || u->isConstructing() )
+            continue;
+
+        if ( u->getType() == type ) {
+            return *u;
+        }
     }
 	return 0;
 }
 
 void build(BWAPI::UnitType type) {
-		using namespace BWAPI;
+    // TODO scv_bw->build can fail for example if scv is in the supply depot. Also maybe scv_bw->train can also. 
+	using namespace BWAPI;
     using namespace Filter;
 
     auto unitType = type.whatBuilds().first;
@@ -47,8 +64,7 @@ void build(BWAPI::UnitType type) {
 
     if(scv_bw->getType().isWorker()) {
         TilePosition targetBuildLocation = Broodwar->getBuildLocation(type, scv_bw->getTilePosition());
-        if ( targetBuildLocation )
-        {
+        if ( targetBuildLocation ) {
             scv_bw->build( type, targetBuildLocation );
         }
     } else {
@@ -66,21 +82,23 @@ int getAvailableMinerals() {
 }
 
 void FirstBot :: onStart() {
-  Broodwar->sendText("Hello world!");
+    Broodwar->sendText("Hello world!");
+    
+    Broodwar->setLocalSpeed(0);
+    //Broodwar->setFrameSkip(16);
+    Broodwar->setGUI(true);
   
-  Broodwar->setLocalSpeed(0);
-  //Broodwar->setFrameSkip(16);
-  Broodwar->setGUI(true);
-  
 
-  Broodwar->enableFlag(Flag::UserInput);
+    Broodwar->enableFlag(Flag::UserInput);
 
-  // Uncomment the following line and the bot will know about everything through the fog of war (cheat).
-  Broodwar->enableFlag(Flag::CompleteMapInformation);
+    // Uncomment the following line and the bot will know about everything through the fog of war (cheat).
+    Broodwar->enableFlag(Flag::CompleteMapInformation);
 
-  // Set the command optimization level so that common commands can be grouped
-  // and reduce the bot's APM (Actions Per Minute).
-  Broodwar->setCommandOptimizationLevel(2);
+    // Set the command optimization level so that common commands can be grouped
+    // and reduce the bot's APM (Actions Per Minute).
+    Broodwar->setCommandOptimizationLevel(2);
+
+    oracle = new SimpleStrategizer();
 }
 
 void FirstBot :: onFrame() {
@@ -111,7 +129,7 @@ void FirstBot :: onFrame() {
   if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
     return;
 
-  Advice advice = oracle.giveAdvice(
+  Advice advice = oracle->giveAdvice(
 	  Broodwar->self()->minerals(),
 	  Broodwar->self()->gas(),
 	  Broodwar->self()->supplyUsed(),

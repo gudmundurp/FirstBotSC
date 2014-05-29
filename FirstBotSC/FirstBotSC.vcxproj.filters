@@ -36,6 +36,18 @@
     <ClInclude Include="BuildFirstSupplyDepot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BuildFirstBarracks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildSecondBarracks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildSecondSupplyDepot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BWAPINice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstBotSC.cpp">
@@ -54,6 +66,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BuildFirstSupplyDepot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildFirstBarracks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildSecondBarracks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildSecondSupplyDepot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

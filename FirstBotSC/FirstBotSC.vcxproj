@@ -97,7 +97,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BuildFirstBarracks.h" />
     <ClInclude Include="BuildFirstSupplyDepot.h" />
+    <ClInclude Include="BuildSecondBarracks.h" />
+    <ClInclude Include="BuildSecondSupplyDepot.h" />
+    <ClInclude Include="BWAPINice.h" />
     <ClInclude Include="FirstBotSC.h" />
     <ClInclude Include="Oracle.h" />
     <ClInclude Include="resource.h" />
@@ -106,7 +110,10 @@
     <ClInclude Include="WorldImpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BuildFirstBarracks.cpp" />
     <ClCompile Include="BuildFirstSupplyDepot.cpp" />
+    <ClCompile Include="BuildSecondBarracks.cpp" />
+    <ClCompile Include="BuildSecondSupplyDepot.cpp" />
     <ClCompile Include="Dll.cpp" />
     <ClCompile Include="FirstBotSC.cpp" />
     <ClCompile Include="SimpleStrategizer.cpp" />
