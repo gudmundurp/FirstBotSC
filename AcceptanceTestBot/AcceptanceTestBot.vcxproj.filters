@@ -21,9 +21,27 @@
     <ClCompile Include="AcceptanceTestBot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OnlineUnitTypeTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OnlineTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitCreated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcceptanceTestBot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OnlineUnitTypeTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OnlineTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitCreated.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

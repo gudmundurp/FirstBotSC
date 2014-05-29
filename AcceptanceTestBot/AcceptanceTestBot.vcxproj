@@ -80,9 +80,15 @@
   <ItemGroup>
     <ClCompile Include="AcceptanceTestBot.cpp" />
     <ClCompile Include="Dll.cpp" />
+    <ClCompile Include="OnlineTestCase.cpp" />
+    <ClCompile Include="OnlineUnitTypeTestCase.cpp" />
+    <ClCompile Include="UnitCreated.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcceptanceTestBot.h" />
+    <ClInclude Include="OnlineTestCase.h" />
+    <ClInclude Include="OnlineUnitTypeTestCase.h" />
+    <ClInclude Include="UnitCreated.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

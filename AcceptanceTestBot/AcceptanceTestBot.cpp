@@ -2,10 +2,14 @@
 
 #include "AcceptanceTestBot.h"
 #include <algorithm>
+#include <memory>
+#include "OnlineUnitTypeTestCase.h"
+#include "UnitCreated.h"
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
 using namespace Filter;
+using namespace testcase;
 
 Unitset workerSet;
 int AcceptanceTestBotWorker = 0;
@@ -13,8 +17,14 @@ int AcceptanceTestBotResourceDepot = 0;
 int reservedMinerals = 0;
 bool initialFrame = true;
 
+std::vector<std::shared_ptr<OnlineUnitTypeTestCase>> testArray;
 
 void AcceptanceTestBot :: onStart() {
+    
+    testArray.push_back(std::make_shared<unittestcase::UnitCreated>(Terran_Supply_Depot));
+    testArray.push_back(std::make_shared<unittestcase::UnitCreated>(Terran_Marine));
+    testArray.push_back(std::make_shared<unittestcase::UnitCreated>(Terran_Barracks));
+
   Broodwar->sendText("Hello world!");
 
   Broodwar->setLocalSpeed(0);
@@ -30,60 +40,47 @@ void AcceptanceTestBot :: onStart() {
   Broodwar->setCommandOptimizationLevel(2);
 }
 
-typedef enum { PENDING, FAILED, SUCCESS } TestResult;
 
-std::vector<TestResult> testArray(2, PENDING);
 
 #define SUPPLY_DEPOT_TEST 0
 #define BARRACKS_TEST 1
 
-void printTestResult(TestResult res, int yPos) {
-	
-		const char* testResult;
-	switch (res) {
+
+void printTestResult(OnlineTestCase testcase, int yPos) {
+    std::string resultMessage = testcase.GetName() + ": ";
+    switch (testcase.GetStatus()) {
 	case SUCCESS:
-		testResult = "Success";
+		resultMessage += "Success";
 		break;
 	case FAILED:
-		testResult = "Failed";
+		resultMessage += "Failed";
 		break;
 	case PENDING:
 	default:
-		testResult = "In Progress";
+		resultMessage += "In Progress";
 		break;
 	}
 
-	Broodwar->drawTextScreen(300, yPos,  "Test result: %s", testResult );
+    Broodwar->drawTextScreen(300, yPos,  resultMessage.c_str());
 }
 
 void printTestResults() {
 	for (auto iter = testArray.begin(); iter != testArray.end(); ++iter) {
-		printTestResult(*iter, 20 * (iter - testArray.begin()));
+		printTestResult(**iter, 20 * (iter - testArray.begin()));
 	}
 	
 }
 
 void AcceptanceTestBot :: onFrame() {
-  printTestResults();
+    printTestResults();
 
-  if ( Broodwar->isPaused() || !Broodwar->self() )
-    return;
+    if ( Broodwar->isPaused() || !Broodwar->self() )
+        return;
 
-  if ( Broodwar->getFrameCount() >= (int)((30*1000)/42.0 + 0.5) ) {
-	  std::for_each(testArray.begin(), testArray.end(),
-		  [](TestResult& res) -> void {if (res == PENDING) res = FAILED;});
-  }
-
-  Unitset myUnits = Broodwar->getAllUnits();
-  for ( auto u = myUnits.begin(); u != myUnits.end(); ++u )
-  {
-	  if( u->getType() == UnitTypes::Terran_Supply_Depot ) {
-	       //Broodwar->sendText("%s", "Supply Depot! Awesome!");     
-		   testArray[SUPPLY_DEPOT_TEST] = SUCCESS;
-	  }
-	  if( u->getType() == UnitTypes::Terran_Barracks ) {
-	       //Broodwar->sendText("%s", "Barracks! Awesome!");     
-		   testArray[BARRACKS_TEST] = SUCCESS;
-	  }
-  }
+    Unitset myUnits = Broodwar->getAllUnits();
+    for ( auto u = myUnits.begin(); u != myUnits.end(); ++u ) {
+        for (auto testCase = testArray.begin(); testCase != testArray.end(); ++testCase) {
+            (**testCase)(*u);
+        }
+    }
 }
