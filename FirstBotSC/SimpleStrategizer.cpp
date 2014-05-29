@@ -56,11 +56,14 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	default:
-		if ((minerals >= 50) && (current < maximum)) {
+		return rush.GetAdvice();
+        /*
+        if ((minerals >= 50) && (current < maximum)) {
 		    return TrainMarine;
 	    } else {
 		    return Nothing;
         }
+        */
     };
 	return Nothing;
 };

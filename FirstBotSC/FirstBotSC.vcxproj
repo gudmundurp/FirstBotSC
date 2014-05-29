@@ -105,6 +105,7 @@
     <ClInclude Include="FirstBotSC.h" />
     <ClInclude Include="Oracle.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RushStrategy.h" />
     <ClInclude Include="SimpleStrategizer.h" />
     <ClInclude Include="StrategyStage.h" />
     <ClInclude Include="WorldImpl.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="BuildSecondSupplyDepot.cpp" />
     <ClCompile Include="Dll.cpp" />
     <ClCompile Include="FirstBotSC.cpp" />
+    <ClCompile Include="RushStrategy.cpp" />
     <ClCompile Include="SimpleStrategizer.cpp" />
     <ClCompile Include="StrategyStage.cpp" />
     <ClCompile Include="WorldImpl.cpp" />

@@ -72,6 +72,19 @@ void build(BWAPI::UnitType type) {
     }
 }
 
+void searchAndDestroy() {
+    auto locations = Broodwar->getStartLocations();
+
+  Unitset myUnits = Broodwar->self()->getUnits();
+	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
+        if(u->getType() == Terran_Marine && !u->isAttacking()) {
+            for(auto location = locations.begin(); location != locations.end(); ++location) {
+                u->attack(Position(*location), true);
+            }
+        }
+    }
+}
+
 int getAvailableMinerals() {
   int retInt = Broodwar->self()->minerals() - reservedMinerals;
   /*if(retInt < 0) {
@@ -142,6 +155,9 @@ void FirstBot :: onFrame() {
   }
   if(advice == TrainMarine) {
 	build(UnitTypes::Terran_Marine);
+  }
+  if(advice == Attack) {
+    searchAndDestroy();
   }
 
   // Iterate through all the units that we own

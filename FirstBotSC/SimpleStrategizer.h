@@ -4,6 +4,7 @@
 #include "BuildFirstBarracks.h"
 #include "BuildSecondBarracks.h"
 #include "BuildSecondSupplyDepot.h"
+#include "RushStrategy.h"
 
 namespace strategy {
 
@@ -22,6 +23,7 @@ private :
     BuildFirstBarracks stage2;
     BuildSecondBarracks stage3;
     BuildSecondSupplyDepot stage4;
+    RushStrategy rush;
 };
 
 };
