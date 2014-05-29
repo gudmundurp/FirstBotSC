@@ -1,5 +1,8 @@
-#include<SimpleStrategizer.h>
+#include "SimpleStrategizer.h"
+#include "BuildFirstSupplyDepot.h"
 #include <BWAPI.h>
+
+using namespace strategy;
 
 SimpleStrategizer::SimpleStrategizer() {
 	_buildOrderStep = 0;
@@ -7,22 +10,20 @@ SimpleStrategizer::SimpleStrategizer() {
 
 Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current, Supply maximum) {
 	BWAPI::Broodwar->printf("Build step: %d",_buildOrderStep);
-    if(current>5) {
-		int x = 1+1;
-	}
 
 	switch(_buildOrderStep) {
-	case(0):
-	    if(current>=9 && maximum==10) {
-	        if(minerals >=100) {
-	            _buildOrderStep++;
-	            return BuildSD;
-	        }
-	    }
+	case(0): {
+        BuildFirstSupplyDepot stage1;
+        Advice advice = stage1.GetAdvice();
+        if (stage1.isDone()) {
+            ++_buildOrderStep;
+        }
+        return advice;
+    }
 	break;
 
 	case(1):
-	if(current>=11 && maximum==18) {
+	if(current>=22 && maximum==36) {
 		if(minerals >=150) {
 			_buildOrderStep++;
 		    return BuildBarracks;
@@ -31,7 +32,7 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	case(2):
-	if(current>=13 && maximum==18) {
+	if(current>=26 && maximum==36) {
 		if(minerals >=150) {
 			_buildOrderStep++;
 		    return BuildBarracks;
@@ -40,7 +41,7 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	case(3):
-	    if(current >=15 && maximum == 18) {
+	    if(current >= 30 && maximum == 36) {
 	        if(minerals >=100) {
 	            _buildOrderStep++;
 	            return BuildSD;

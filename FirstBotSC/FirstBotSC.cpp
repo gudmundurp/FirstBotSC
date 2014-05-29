@@ -114,8 +114,8 @@ void FirstBot :: onFrame() {
   Advice advice = oracle.giveAdvice(
 	  Broodwar->self()->minerals(),
 	  Broodwar->self()->gas(),
-	  Broodwar->self()->supplyUsed()/2,
-	  Broodwar->self()->supplyTotal()/2);
+	  Broodwar->self()->supplyUsed(),
+	  Broodwar->self()->supplyTotal());
   if(advice == BuildSD) {
 	build(UnitTypes::Terran_Supply_Depot);
   }

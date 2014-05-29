@@ -30,6 +30,12 @@
     <ClInclude Include="SimpleStrategizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StrategyStage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildFirstSupplyDepot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstBotSC.cpp">
@@ -42,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleStrategizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrategyStage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildFirstSupplyDepot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
