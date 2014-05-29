@@ -1,8 +1,5 @@
 #include "SimpleStrategizer.h"
-#include "BuildFirstSupplyDepot.h"
-#include "BuildFirstBarracks.h"
-#include "BuildSecondBarracks.h"
-#include "BuildSecondSupplyDepot.h"
+
 #include <BWAPI.h>
 
 using namespace strategy;
@@ -22,7 +19,6 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 
 	switch(_buildOrderStep) {
 	case(0): {
-        BuildFirstSupplyDepot stage1;
         Advice advice = stage1.GetAdvice();
         if (stage1.isDone()) {
             ChangeStage(1);
@@ -32,7 +28,6 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	case(1): {
-        BuildFirstBarracks stage2;
         Advice advice = stage2.GetAdvice();
         if (stage2.isDone()) {
             ChangeStage(2);
@@ -42,7 +37,6 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	case(2): {
-        BuildSecondBarracks stage3;
         Advice advice = stage3.GetAdvice();
         if (stage3.isDone()) {
             ChangeStage(3);
@@ -53,7 +47,6 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 
 
 	case(3): {
-        BuildSecondSupplyDepot stage4;
         Advice advice = stage4.GetAdvice();
         if (stage4.isDone()) {
             ChangeStage(4);

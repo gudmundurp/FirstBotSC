@@ -11,7 +11,7 @@ using namespace BWAPI;
 using namespace UnitTypes::Enum;
 using namespace Filter;
 
-SimpleStrategizer *oracle;
+strategy::SimpleStrategizer *oracle;
 Unitset workerSet;
 int mainWorker = 0;
 int mainResourceDepot = 0;
@@ -98,7 +98,7 @@ void FirstBot :: onStart() {
     // and reduce the bot's APM (Actions Per Minute).
     Broodwar->setCommandOptimizationLevel(2);
 
-    oracle = new SimpleStrategizer();
+    oracle = new strategy::SimpleStrategizer();
 }
 
 void FirstBot :: onFrame() {
