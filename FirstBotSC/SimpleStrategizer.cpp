@@ -1,6 +1,15 @@
 #include<SimpleStrategizer.h>
+#include <BWAPI.h>
+
+SimpleStrategizer::SimpleStrategizer() {
+	_buildOrderStep = 0;
+}
 
 Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current, Supply maximum) {
+	BWAPI::Broodwar->printf("Build step: %d",_buildOrderStep);
+    if(current>5) {
+		int x = 1+1;
+	}
 
 	switch(_buildOrderStep) {
 	case(0):
@@ -15,6 +24,7 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	case(1):
 	if(current>=11 && maximum==18) {
 		if(minerals >=150) {
+			_buildOrderStep++;
 		    return BuildBarracks;
 	    }
 	}
@@ -23,6 +33,7 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	case(2):
 	if(current>=13 && maximum==18) {
 		if(minerals >=150) {
+			_buildOrderStep++;
 		    return BuildBarracks;
 	    }
 	}

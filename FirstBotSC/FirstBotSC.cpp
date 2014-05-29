@@ -63,7 +63,7 @@ void FirstBot :: onStart() {
   
   Broodwar->setLocalSpeed(0);
   //Broodwar->setFrameSkip(16);
-  Broodwar->setGUI(false);
+  Broodwar->setGUI(true);
   
 
   Broodwar->enableFlag(Flag::UserInput);
@@ -78,18 +78,22 @@ void FirstBot :: onStart() {
 
 void FirstBot :: onFrame() {
     // Called once every game frame
-  
   // Display the game frame rate as text in the upper left area of the screen
   Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
   Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
   Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
   Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
+  BWAPI::Broodwar->drawTextScreen(200, 80, "Minerals: %d Gas: %d Supply: %d/%d",
+	  Broodwar->self()->minerals(),
+	  Broodwar->self()->gas(),
+	  Broodwar->self()->supplyUsed()/2,
+	  Broodwar->self()->supplyTotal()/2);
 
   std::time_t t = std::time(nullptr);
   char buf[100];
   std::size_t len = std::strftime(buf, (sizeof buf) - 1, "%c %Z", std::gmtime(&t));
   buf[len] = 0;
-  Broodwar->drawTextScreen(200, 80, "Hello world: %s", buf);
+  //Broodwar->drawTextScreen(200, 80, "Hello world: %s", buf);
 
   // Return if the game is a replay or is paused
   if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
@@ -99,18 +103,18 @@ void FirstBot :: onFrame() {
   // Latency frames are the number of frames before commands are processed.
   if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
     return;
-  /*
+
   Advice advice = oracle.giveAdvice(
 	  Broodwar->self()->minerals(),
 	  Broodwar->self()->gas(),
-	  Broodwar->self()->supplyUsed(),
-	  Broodwar->self()->supplyTotal());
+	  Broodwar->self()->supplyUsed()/2,
+	  Broodwar->self()->supplyTotal()/2);
   if(advice == BuildSD) {
 	build(UnitTypes::Terran_Supply_Depot);
   }
   if(advice == BuildBarracks) {
 	build(UnitTypes::Terran_Barracks);
-  }*/
+  }
 
   // Iterate through all the units that we own
   Unitset myUnits = Broodwar->self()->getUnits();

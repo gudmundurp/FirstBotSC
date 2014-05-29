@@ -27,14 +27,14 @@ void WorldImpl::order(SCV* scv, Object obj) {
         Broodwar << "Error not building supplydepot." << std::endl;
         return;
     }
-
+	/*
     Unit scv_bw = Broodwar->getUnit(scv->getID());
 
     TilePosition targetBuildLocation = Broodwar->getBuildLocation(UnitTypes::Terran_Supply_Depot, scv_bw->getTilePosition());
               if ( targetBuildLocation )
               {
                 scv_bw->build( UnitTypes::Terran_Supply_Depot, targetBuildLocation );
-              }
+              }*/
 }
 
 bool WorldImpl::startedBuilding(SCV*) { return false; }
