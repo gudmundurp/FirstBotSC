@@ -24,10 +24,10 @@ typedef std::map<int, SharedSCVPointer> SharedSCVPointerMap;
 SharedSCVPointerMap scvs;
 WorldImpl world;
 
-Unit getBestWorker() {
+Unit findTrainer(UnitType type) {
   Unitset myUnits = Broodwar->self()->getUnits();
 	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
-	   if ( u->getType().isWorker() )
+	   if ( u->getType() == type )
        {
            return *u;
        }
@@ -39,13 +39,20 @@ void build(BWAPI::UnitType type) {
 		using namespace BWAPI;
     using namespace Filter;
 
-    Unit scv_bw = getBestWorker();
-	if(scv_bw) {
+    auto unitType = type.whatBuilds().first;
+
+    Unit scv_bw = findTrainer(unitType);
+
+    if(!scv_bw) return;
+
+    if(scv_bw->getType().isWorker()) {
         TilePosition targetBuildLocation = Broodwar->getBuildLocation(type, scv_bw->getTilePosition());
         if ( targetBuildLocation )
         {
             scv_bw->build( type, targetBuildLocation );
         }
+    } else {
+        scv_bw->train(type);
     }
 }
 
@@ -114,6 +121,9 @@ void FirstBot :: onFrame() {
   }
   if(advice == BuildBarracks) {
 	build(UnitTypes::Terran_Barracks);
+  }
+  if(advice == TrainMarine) {
+	build(UnitTypes::Terran_Marine);
   }
 
   // Iterate through all the units that we own

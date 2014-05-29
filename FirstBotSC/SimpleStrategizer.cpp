@@ -49,7 +49,11 @@ Advice SimpleStrategizer::giveAdvice(Minerals minerals, Gas gas, Supply current,
 	break;
 
 	default:
-		return Nothing;
+		if ((minerals >= 50) && (current < maximum)) {
+		    return TrainMarine;
+	    } else {
+		    return Nothing;
+        }
     };
 	return Nothing;
 };

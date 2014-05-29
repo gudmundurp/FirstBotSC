@@ -1,4 +1,4 @@
-typedef enum { Nothing, Attack, BuildSD, BuildBarracks } Advice;
+typedef enum { Nothing, Attack, BuildSD, BuildBarracks, TrainMarine } Advice;
 
 typedef int Minerals;
 typedef int Gas;
