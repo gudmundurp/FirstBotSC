@@ -94,10 +94,11 @@ int getAvailableMinerals() {
   return retInt;
 }
 
+int speed = 0;
 void FirstBot :: onStart() {
     Broodwar->sendText("Hello world!");
     
-    Broodwar->setLocalSpeed(0);
+    Broodwar->setLocalSpeed(speed);
     //Broodwar->setFrameSkip(16);
     Broodwar->setGUI(true);
   
@@ -114,6 +115,16 @@ void FirstBot :: onStart() {
     oracle = new strategy::SimpleStrategizer();
 }
 
+void slowOrSpeedForKeyboardState(bool increasing, bool decreasing) {
+    if(!increasing && !decreasing) return;
+    if(increasing && decreasing) return;
+
+    int factor = (increasing ? 1 : -1);
+    speed += 4*factor;
+    if(speed < 0) speed = 0;
+    Broodwar->setLocalSpeed(speed);
+}
+
 void FirstBot :: onFrame() {
     // Called once every game frame
   // Display the game frame rate as text in the upper left area of the screen
@@ -126,6 +137,18 @@ void FirstBot :: onFrame() {
 	  Broodwar->self()->gas(),
 	  Broodwar->self()->supplyUsed()/2,
 	  Broodwar->self()->supplyTotal()/2);
+  Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
+
+  auto mousePosition = Broodwar->getMousePosition();
+  auto mouseState = Broodwar->getMouseState(MouseButton::M_LEFT);
+  auto increasing = Broodwar->getKeyState(K_ADD) || Broodwar->getKeyState(K_OEM_PLUS);
+  auto decreasing = Broodwar->getKeyState(K_SUBTRACT) || Broodwar->getKeyState(K_OEM_MINUS);
+  Broodwar->drawTextScreen(400,20, "Mouse x: %d Mouse y: %d", mousePosition.x, mousePosition.y);
+  Broodwar->drawTextScreen(400,40, "Left mouse pressed %s", (mouseState? "true" : "false"));
+
+  
+  //slowOrSpeedForMouseState(mousePosition,mouseState);
+  slowOrSpeedForKeyboardState(increasing,decreasing);
 
   std::time_t t = std::time(nullptr);
   char buf[100];

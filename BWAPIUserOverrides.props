@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <BWAPIDir>C:\Users\hallbjorn\Documents\hallbjorn\bwapi\Release_Binary</BWAPIDir>
+    <BWAPIDir>d:\src\bwapi\Release_Binary</BWAPIDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
