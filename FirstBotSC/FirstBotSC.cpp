@@ -139,67 +139,52 @@ void FirstBot :: onFrame() {
     // Called once every game frame
 
     Broodwar->drawTextScreen(0, 0,  "No build location: %d", nobuildloc );
-  // Display the game frame rate as text in the upper left area of the screen
-  Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
-  Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
-  Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
-  Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
-  BWAPI::Broodwar->drawTextScreen(200, 80, "Minerals: %d Gas: %d Supply: %d/%d",
-	  Broodwar->self()->minerals(),
-	  Broodwar->self()->gas(),
-	  Broodwar->self()->supplyUsed()/2,
-	  Broodwar->self()->supplyTotal()/2);
-  Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
+    // Display the game frame rate as text in the upper left area of the screen
+    Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
+    Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
+    Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
+    Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
+    BWAPI::Broodwar->drawTextScreen(200, 80, "Minerals: %d Gas: %d Supply: %d/%d",
+        Broodwar->self()->minerals(),
+        Broodwar->self()->gas(),
+        Broodwar->self()->supplyUsed()/2,
+        Broodwar->self()->supplyTotal()/2);
+    Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
 
-  auto mousePosition = Broodwar->getMousePosition();
-  auto mouseState = Broodwar->getMouseState(MouseButton::M_LEFT);
-  auto increasing = Broodwar->getKeyState(K_ADD) || Broodwar->getKeyState(K_OEM_PLUS);
-  auto decreasing = Broodwar->getKeyState(K_SUBTRACT) || Broodwar->getKeyState(K_OEM_MINUS);
-  Broodwar->drawTextScreen(400,20, "Mouse x: %d Mouse y: %d", mousePosition.x, mousePosition.y);
-  Broodwar->drawTextScreen(400,40, "Left mouse pressed %s", (mouseState? "true" : "false"));
+    auto mousePosition = Broodwar->getMousePosition();
+    auto mouseState = Broodwar->getMouseState(MouseButton::M_LEFT);
+    auto increasing = Broodwar->getKeyState(K_ADD) || Broodwar->getKeyState(K_OEM_PLUS);
+    auto decreasing = Broodwar->getKeyState(K_SUBTRACT) || Broodwar->getKeyState(K_OEM_MINUS);
+    Broodwar->drawTextScreen(400,20, "Mouse x: %d Mouse y: %d", mousePosition.x, mousePosition.y);
+    Broodwar->drawTextScreen(400,40, "Left mouse pressed %s", (mouseState? "true" : "false"));
 
-  
-  //slowOrSpeedForMouseState(mousePosition,mouseState);
-  slowOrSpeedForKeyboardState(increasing,decreasing);
 
-  std::time_t t = std::time(nullptr);
-  char buf[100];
-  std::size_t len = std::strftime(buf, (sizeof buf) - 1, "%c %Z", std::gmtime(&t));
-  buf[len] = 0;
-  //Broodwar->drawTextScreen(200, 80, "Hello world: %s", buf);
+    //slowOrSpeedForMouseState(mousePosition,mouseState);
+    slowOrSpeedForKeyboardState(increasing,decreasing);
 
-  // Return if the game is a replay or is paused
-  if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
-    return;
+    std::time_t t = std::time(nullptr);
+    char buf[100];
+    std::size_t len = std::strftime(buf, (sizeof buf) - 1, "%c %Z", std::gmtime(&t));
+    buf[len] = 0;
+    //Broodwar->drawTextScreen(200, 80, "Hello world: %s", buf);
 
-  // Prevent spamming by only running our onFrame once every number of latency frames.
-  // Latency frames are the number of frames before commands are processed.
-  if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
-    return;
+    // Return if the game is a replay or is paused
+    if ( Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self() )
+        return;
 
-  Advice advice = oracle->giveAdvice(
-	  Broodwar->self()->minerals(),
-	  Broodwar->self()->gas(),
-	  Broodwar->self()->supplyUsed(),
-	  Broodwar->self()->supplyTotal());
-  if(advice == BuildSD) {
-      Broodwar->sendText("Building supply depot");
-	build(UnitTypes::Terran_Supply_Depot);
-  }
-  if(advice == BuildBarracks) {
-      Broodwar->sendText("Building barracks");
-	build(UnitTypes::Terran_Barracks);
-  }
-  if(advice == TrainMarine) {
-	build(UnitTypes::Terran_Marine);
-  }
-  if(advice == Attack) {
-      Broodwar->sendText("Attacking");
-    searchAndDestroy();
-  }
+    // Prevent spamming by only running our onFrame once every number of latency frames.
+    // Latency frames are the number of frames before commands are processed.
+    if ( Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0 )
+        return;
 
-  updateManagerStateMachines(advice);
-  updateMicroStateMachines();
+    Advice advice = oracle->giveAdvice(
+        Broodwar->self()->minerals(),
+        Broodwar->self()->gas(),
+        Broodwar->self()->supplyUsed(),
+        Broodwar->self()->supplyTotal());
+
+    updateManagerStateMachines(advice);
+    updateMicroStateMachines();
 }
 
 
@@ -246,5 +231,24 @@ void FirstBot::updateMicroStateMachines() {
 }
 
 void FirstBot::updateManagerStateMachines(Advice advice) {
-    return;
+
+    for (;;) {
+        if (advice == BuildSD) {
+            Broodwar->sendText("Building supply depot");
+            ::build(UnitTypes::Terran_Supply_Depot);
+        }
+        if (advice == BuildBarracks) {
+            Broodwar->sendText("Building barracks");
+            ::build(UnitTypes::Terran_Barracks);
+        }
+        break;
+    }
+
+    if (advice == TrainMarine) {
+        ::build(UnitTypes::Terran_Marine);
+    }
+    if (advice == Attack) {
+        Broodwar->sendText("Attacking");
+        searchAndDestroy();
+    }
 }

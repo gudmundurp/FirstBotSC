@@ -1,6 +1,7 @@
 // FirstBotSC.h
 #pragma once
 #include <BWAPI.h>
+#include "Advice.h"
 
 class FirstBot : public BWAPI::AIModule
 {

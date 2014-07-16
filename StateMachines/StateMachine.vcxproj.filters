@@ -19,6 +19,12 @@
     <Filter Include="Source Files\SCV">
       <UniqueIdentifier>{cde26937-cc0e-4112-b7fa-cd83960498b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ManagerStateMachines">
+      <UniqueIdentifier>{aa12fac5-6bb1-46ed-b54a-50ba6115f1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ManagerStateMachines">
+      <UniqueIdentifier>{884b90d0-8d91-4ab7-95f0-e03a1a7ddde9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
@@ -36,6 +42,15 @@
     <ClInclude Include="MockWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SCVManagerSM.h">
+      <Filter>Header Files\ManagerStateMachines</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerSM.h">
+      <Filter>Header Files\ManagerStateMachines</Filter>
+    </ClInclude>
+    <ClInclude Include="Advice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SCV\SCV.cpp">
@@ -49,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="MockWorld.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SCVManagerSM.cpp">
+      <Filter>Source Files\ManagerStateMachines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

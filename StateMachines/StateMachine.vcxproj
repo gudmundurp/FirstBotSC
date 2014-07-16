@@ -113,7 +113,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Advice.h" />
+    <ClInclude Include="ManagerSM.h" />
     <ClInclude Include="MockWorld.h" />
+    <ClInclude Include="SCVManagerSM.h" />
     <ClInclude Include="SCV\SCV.h" />
     <ClInclude Include="SCV\SCV_States.h" />
     <ClInclude Include="State.h" />
@@ -122,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MockWorld.cpp" />
+    <ClCompile Include="SCVManagerSM.cpp" />
     <ClCompile Include="SCV\SCV.cpp" />
     <ClCompile Include="SCV\SCV_States.cpp" />
   </ItemGroup>

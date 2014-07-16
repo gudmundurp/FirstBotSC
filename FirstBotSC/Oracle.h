@@ -1,6 +1,6 @@
 #pragma once
 
-typedef enum { Nothing, Attack, BuildSD, BuildBarracks, TrainMarine } Advice;
+#include "Advice.h"
 
 typedef int Minerals;
 typedef int Gas;
