@@ -2,6 +2,11 @@
 #pragma once
 #include <BWAPI.h>
 #include "Advice.h"
+#include "SCV/SCV.h"
+
+typedef std::shared_ptr<SCV> SharedMicroSMPtr;
+typedef std::map<int, SharedMicroSMPtr> SharedMicroSMPtrMap;
+extern SharedMicroSMPtrMap microStateMachines;
 
 class FirstBot : public BWAPI::AIModule
 {

@@ -108,7 +108,6 @@
     <ClInclude Include="RushStrategy.h" />
     <ClInclude Include="SimpleStrategizer.h" />
     <ClInclude Include="StrategyStage.h" />
-    <ClInclude Include="WorldImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BuildFirstBarracks.cpp" />
@@ -120,7 +119,6 @@
     <ClCompile Include="RushStrategy.cpp" />
     <ClCompile Include="SimpleStrategizer.cpp" />
     <ClCompile Include="StrategyStage.cpp" />
-    <ClCompile Include="WorldImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

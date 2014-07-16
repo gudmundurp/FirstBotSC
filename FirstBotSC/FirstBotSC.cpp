@@ -3,6 +3,7 @@
 #include "FirstBotSC.h"
 #include <SimpleStrategizer.h>
 #include "SCV\SCV.h"
+#include "SCVManagerSM.h"
 #include "WorldImpl.h"
 #include <map>
 #include <ctime>
@@ -17,12 +18,12 @@ int mainWorker = 0;
 int mainResourceDepot = 0;
 int reservedMinerals = 0;
 bool initialFrame = true;
+SharedMicroSMPtrMap microStateMachines;
 
-typedef std::shared_ptr<SCV> SharedSCVPointer;
-typedef std::map<int, SharedSCVPointer> SharedSCVPointerMap;
+typedef std::shared_ptr<ManagerSM> SharedManagerSMPointer;
+typedef std::map<int, SharedManagerSMPointer> SharedManagerSMPointerMap;
 
-SharedSCVPointerMap scvs;
-WorldImpl world;
+SharedManagerSMPointerMap managers;
 
 Unit findTrainer(UnitType type) {
   Unitset myUnits = Broodwar->self()->getUnits();
@@ -51,36 +52,9 @@ Unit findTrainer(UnitType type) {
 	return 0;
 }
 
+
+
 int nobuildloc = 0;
-
-void build(BWAPI::UnitType type) {
-    // TODO scv_bw->build can fail for example if scv is in the supply depot. Also maybe scv_bw->train can also. 
-	using namespace BWAPI;
-    using namespace Filter;
-
-    auto unitType = type.whatBuilds().first;
-
-    Unit scv_bw = findTrainer(unitType);
-
-    if(!scv_bw) {
-        Broodwar->sendText("Enginn builder/trainer fannst");
-        return;
-    }
-
-    if(scv_bw->getType().isWorker()) {
-        TilePosition targetBuildLocation = Broodwar->getBuildLocation(type, scv_bw->getTilePosition());
-        if ( targetBuildLocation && targetBuildLocation != TilePositions::Invalid ) {
-            auto scv = scvs[scv_bw->getID()];
-            scv->build(type, targetBuildLocation);
-            //scv_bw->build( type, targetBuildLocation );
-        } else {
-            Broodwar->sendText("Found no build location");
-            ++nobuildloc;
-        }
-    } else {
-        scv_bw->train(type);
-    }
-}
 
 void searchAndDestroy() {
     auto locations = Broodwar->getStartLocations();
@@ -123,6 +97,8 @@ void FirstBot :: onStart() {
     Broodwar->setCommandOptimizationLevel(2);
 
     oracle = new strategy::SimpleStrategizer();
+
+    managers[0] = std::make_shared<SCVManagerSM>();
 }
 
 void slowOrSpeedForKeyboardState(bool increasing, bool decreasing) {
@@ -193,6 +169,17 @@ void FirstBot::updateMicroStateMachines() {
     Unitset myUnits = Broodwar->self()->getUnits();
     for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
     {
+        int id = u->getID();
+        if (!microStateMachines.count(id)) {
+            microStateMachines[id] = std::make_shared<SCV>(id, &world);
+        }
+    }
+
+    //for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
+    //{
+    for (auto iter = microStateMachines.begin(); iter != microStateMachines.end(); ++iter) {
+        auto u = Broodwar->getUnit(iter->first);
+        auto sm = iter->second;
         // Ignore the unit if it no longer exists
         // Make sure to include this block when handling any Unit pointer!
         if ( !u->exists() )
@@ -210,16 +197,11 @@ void FirstBot::updateMicroStateMachines() {
         if ( !u->isCompleted() || u->isConstructing() )
             continue;
 
-        // If the unit is a worker unit
         if ( u->getType().isWorker() ) {
             int id = u->getID();
-
-            SharedSCVPointerMap::iterator iter = scvs.find(id);
-            if (iter == scvs.end()) {
-                scvs[id] = SharedSCVPointer(new SCV(id, &world));
-            }
-            scvs[id]->Update();
-        } else if ( u->getType().isResourceDepot() ) {
+            sm->Update();
+        }
+        if ( u->getType().isResourceDepot() ) {
             // A resource depot is a Command Center, Nexus, or Hatchery
             // Order the depot to construct more workers! But only when it is idle.
             if ( u->isIdle() )
@@ -232,20 +214,17 @@ void FirstBot::updateMicroStateMachines() {
 
 void FirstBot::updateManagerStateMachines(Advice advice) {
 
-    for (;;) {
-        if (advice == BuildSD) {
-            Broodwar->sendText("Building supply depot");
-            ::build(UnitTypes::Terran_Supply_Depot);
-        }
-        if (advice == BuildBarracks) {
-            Broodwar->sendText("Building barracks");
-            ::build(UnitTypes::Terran_Barracks);
-        }
-        break;
+    for (auto managerIter = managers.begin(); managerIter != managers.end(); ++managerIter) {
+        managerIter->second->update(advice);
     }
 
     if (advice == TrainMarine) {
-        ::build(UnitTypes::Terran_Marine);
+        Unit scv_bw = findTrainer(UnitTypes::Terran_Marine);
+        if(!scv_bw) {
+            Broodwar->sendText("Enginn builder/trainer fannst");
+        } else {
+            scv_bw->train(UnitTypes::Terran_Marine);
+        }
     }
     if (advice == Attack) {
         Broodwar->sendText("Attacking");

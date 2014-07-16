@@ -113,6 +113,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="WorldImpl.h" />
     <ClInclude Include="Advice.h" />
     <ClInclude Include="ManagerSM.h" />
     <ClInclude Include="MockWorld.h" />
@@ -123,6 +124,7 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="WorldImpl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MockWorld.cpp" />
     <ClCompile Include="SCVManagerSM.cpp" />
