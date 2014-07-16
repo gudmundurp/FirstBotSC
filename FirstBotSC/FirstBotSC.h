@@ -7,6 +7,9 @@ class FirstBot : public BWAPI::AIModule
 	public:
     virtual void onStart();
     virtual void onFrame();
+
+    virtual void updateMicroStateMachines();
+    virtual void updateManagerStateMachines(Advice advice);
     /*
         virtual void onUnitComplete(BWAPI::Unit unit);
     virtual void onUnitCreate(BWAPI::Unit unit);

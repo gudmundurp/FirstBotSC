@@ -198,45 +198,53 @@ void FirstBot :: onFrame() {
     searchAndDestroy();
   }
 
-  // Iterate through all the units that we own
-  Unitset myUnits = Broodwar->self()->getUnits();
-  for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
-  {
-    // Ignore the unit if it no longer exists
-    // Make sure to include this block when handling any Unit pointer!
-    if ( !u->exists() )
-      continue;
+  updateManagerStateMachines(advice);
+  updateMicroStateMachines();
+}
 
-    // Ignore the unit if it has one of the following status ailments
-    if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
-      continue;
 
-    // Ignore the unit if it is in one of the following states
-    if ( u->isLoaded() || !u->isPowered() || u->isStuck() )
-      continue;
-
-    // Ignore the unit if it is incomplete or busy constructing
-    if ( !u->isCompleted() || u->isConstructing() )
-      continue;
-
-    // If the unit is a worker unit
-    if ( u->getType().isWorker() )
+void FirstBot::updateMicroStateMachines() {
+    // Iterate through all the units that we own
+    Unitset myUnits = Broodwar->self()->getUnits();
+    for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
     {
-      int id = u->getID();
+        // Ignore the unit if it no longer exists
+        // Make sure to include this block when handling any Unit pointer!
+        if ( !u->exists() )
+            continue;
 
-      SharedSCVPointerMap::iterator iter = scvs.find(id);
-      if (iter == scvs.end()) {
-        scvs[id] = SharedSCVPointer(new SCV(id, &world));
-      }
-      scvs[id]->Update();
-    } else if ( u->getType().isResourceDepot() ) // A resource depot is a Command Center, Nexus, or Hatchery
-    {
+        // Ignore the unit if it has one of the following status ailments
+        if ( u->isLockedDown() || u->isMaelstrommed() || u->isStasised() )
+            continue;
 
-      // Order the depot to construct more workers! But only when it is idle.
-      if ( u->isIdle() )
-      {
-         u->train(u->getType().getRace().getWorker());
-      }
-    }
-  } // closure: unit iterator
+        // Ignore the unit if it is in one of the following states
+        if ( u->isLoaded() || !u->isPowered() || u->isStuck() )
+            continue;
+
+        // Ignore the unit if it is incomplete or busy constructing
+        if ( !u->isCompleted() || u->isConstructing() )
+            continue;
+
+        // If the unit is a worker unit
+        if ( u->getType().isWorker() ) {
+            int id = u->getID();
+
+            SharedSCVPointerMap::iterator iter = scvs.find(id);
+            if (iter == scvs.end()) {
+                scvs[id] = SharedSCVPointer(new SCV(id, &world));
+            }
+            scvs[id]->Update();
+        } else if ( u->getType().isResourceDepot() ) {
+            // A resource depot is a Command Center, Nexus, or Hatchery
+            // Order the depot to construct more workers! But only when it is idle.
+            if ( u->isIdle() )
+            {
+                u->train(u->getType().getRace().getWorker());
+            }
+        }
+    } 
+}
+
+void FirstBot::updateManagerStateMachines(Advice advice) {
+    return;
 }
