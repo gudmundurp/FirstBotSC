@@ -4,6 +4,7 @@
 #include "../State.h"
 #include "../World.h"
 #include <string>
+#include "BWAPI.h"
 
 class SCV {
 
@@ -31,6 +32,9 @@ public:
 
   void reserveMinerals(int minerals);
   void unreserveMinerals();
+
+  void build(BWAPI::UnitType type, BWAPI::TilePosition targetBuildLocation);
+
   void buildSupplyDepot();
 
   World* getWorld();
@@ -44,6 +48,7 @@ public:
 
   bool hasBuildUnit();
   bool isConstructing();
+  bool isIdle();
 
 private:
 #ifdef FIRSTBOT_UNIT_TEST

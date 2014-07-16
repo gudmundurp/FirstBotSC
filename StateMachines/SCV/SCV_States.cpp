@@ -4,12 +4,12 @@
 #include <iostream>
 #include <string>
 
-#ifndef FIRSTBOT_UNIT_TEST
+/*#ifndef FIRSTBOT_UNIT_TEST
    #include "BWAPI.h"
    #define LOG(state, action, unit) do { BWAPI::Broodwar->printf("%08d %s %s", unit->getID(), state, action); } while(false)
-#else
+#else*/
    #define LOG(state, action, unit) 
-#endif
+//#endif
 
 Idle* Idle::instance;
 
@@ -64,16 +64,18 @@ void Mining::Enter(SCV* scv)
 void Mining::Execute(SCV* scv)
 {
     //LOG("Mining", "Execute", scv);
+    /*
     if (scv->checkMinerals() >= 100 && scv->unusedSupply() <= 6) {
         scv->reserveMinerals(100);
-        scv->ChangeState(GoingToBuildSupplyDepot::Instance());
+        scv->ChangeState(GoingToBuildSupplyDepot::Instance());*/
     //else if !LackingSupply and
     //        SuppDep >=
     //        Minerals >= 150
     //   then Build Barracks
-    } else {
+    /*
+    } else {*/
         scv->startMining();
-    }
+    //}
 }
 
 void Mining::Exit(SCV* scv)
@@ -110,7 +112,7 @@ void GoingToBuildSupplyDepot::Execute(SCV* scv)
     //LOG("GoingToBuildSupplyDepot", "Execute", scv);
     if(scv->hasBuildUnit()) {
         scv->unreserveMinerals();
-    } else if(!scv->isConstructing()) {
+    } else if(!scv->isConstructing()&&scv->isIdle()) {
         scv->ChangeState(Mining::Instance());
     } else {
         // Is constructing or on way to site.

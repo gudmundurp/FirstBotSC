@@ -41,7 +41,7 @@ Unit findTrainer(UnitType type) {
             continue;
 
         // Ignore the unit if it is incomplete or busy constructing
-        if ( !u->isCompleted() || u->isConstructing() )
+        if ( !u->isCompleted() || u->isConstructing() || u->isTraining() )
             continue;
 
         if ( u->getType() == type ) {
@@ -50,6 +50,8 @@ Unit findTrainer(UnitType type) {
     }
 	return 0;
 }
+
+int nobuildloc = 0;
 
 void build(BWAPI::UnitType type) {
     // TODO scv_bw->build can fail for example if scv is in the supply depot. Also maybe scv_bw->train can also. 
@@ -60,12 +62,20 @@ void build(BWAPI::UnitType type) {
 
     Unit scv_bw = findTrainer(unitType);
 
-    if(!scv_bw) return;
+    if(!scv_bw) {
+        Broodwar->sendText("Enginn builder/trainer fannst");
+        return;
+    }
 
     if(scv_bw->getType().isWorker()) {
         TilePosition targetBuildLocation = Broodwar->getBuildLocation(type, scv_bw->getTilePosition());
-        if ( targetBuildLocation ) {
-            scv_bw->build( type, targetBuildLocation );
+        if ( targetBuildLocation && targetBuildLocation != TilePositions::Invalid ) {
+            auto scv = scvs[scv_bw->getID()];
+            scv->build(type, targetBuildLocation);
+            //scv_bw->build( type, targetBuildLocation );
+        } else {
+            Broodwar->sendText("Found no build location");
+            ++nobuildloc;
         }
     } else {
         scv_bw->train(type);
@@ -127,6 +137,8 @@ void slowOrSpeedForKeyboardState(bool increasing, bool decreasing) {
 
 void FirstBot :: onFrame() {
     // Called once every game frame
+
+    Broodwar->drawTextScreen(0, 0,  "No build location: %d", nobuildloc );
   // Display the game frame rate as text in the upper left area of the screen
   Broodwar->drawTextScreen(200, 0,  "FPS: %d", Broodwar->getFPS() );
   Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
@@ -171,15 +183,18 @@ void FirstBot :: onFrame() {
 	  Broodwar->self()->supplyUsed(),
 	  Broodwar->self()->supplyTotal());
   if(advice == BuildSD) {
+      Broodwar->sendText("Building supply depot");
 	build(UnitTypes::Terran_Supply_Depot);
   }
   if(advice == BuildBarracks) {
+      Broodwar->sendText("Building barracks");
 	build(UnitTypes::Terran_Barracks);
   }
   if(advice == TrainMarine) {
 	build(UnitTypes::Terran_Marine);
   }
   if(advice == Attack) {
+      Broodwar->sendText("Attacking");
     searchAndDestroy();
   }
 
