@@ -43,7 +43,7 @@ SCENARIO( "SCV enters Build_Supply_Depot when 100 minerals and low supply", "[SC
         world.setUsedSupplies(8);
 
         SCV scv(0,&world);
-        scv.ChangeState(Mining::Instance());
+        scv.GetSM()->ChangeState(Mining::Instance());
 
         THEN( "SCV should change to Build_SD when updating state and it should spend 100 minerals when started building") {
             scv.Update();

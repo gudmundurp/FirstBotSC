@@ -1,5 +1,5 @@
 #include "SCV_States.h"
-#include "../State.h"
+#include "State.h"
 #include "SCV.h"
 #include <iostream>
 #include <string>
@@ -25,18 +25,18 @@ std::string Idle::getName()
     return "Idle";
 }
 
-void Idle::Enter(SCV* scv)
+void Idle::Enter(Entity *scv)
 {
    std::cout << "Entering idle state ...";
 }
 
-void Idle::Execute(SCV* scv)
+void Idle::Execute(Entity *scv)
 {
     std::cout << "Executing idle state ...";
-    scv->ChangeState(Mining::Instance());
+    scv->GetSM()->ChangeState(Mining::Instance());
 }
 
-void Idle::Exit(SCV* scv)
+void Idle::Exit(Entity *scv)
 {
     std::cout << "Leaving idle state ...";
 }
@@ -56,12 +56,12 @@ std::string Mining::getName()
     return "Mining";
 }
 
-void Mining::Enter(SCV* scv)
+void Mining::Enter(Entity *scv)
 {
     LOG("Mining", "Enter", scv);
 }
 
-void Mining::Execute(SCV* scv)
+void Mining::Execute(Entity *scv)
 {
     //LOG("Mining", "Execute", scv);
     /*
@@ -74,11 +74,11 @@ void Mining::Execute(SCV* scv)
     //   then Build Barracks
     /*
     } else {*/
-        scv->startMining();
+        ((SCV*)scv)->startMining();
     //}
 }
 
-void Mining::Exit(SCV* scv)
+void Mining::Exit(Entity *scv)
 {
     LOG("Mining", "Exit", scv);
     //No action required
@@ -99,27 +99,27 @@ std::string GoingToBuildSupplyDepot::getName()
     return "GoingToBuildSupplyDepot";
 }
 
-void GoingToBuildSupplyDepot::Enter(SCV* scv)
+void GoingToBuildSupplyDepot::Enter(Entity *scv)
 {
     LOG("GoingToBuildSupplyDepot", "Enter", scv);
-    World* world = scv->getWorld();
+    World* world = ((SCV*)scv)->getWorld();
 
-    world->order(scv, World::SupplyDepot);
+    world->order(((SCV*)scv), World::SupplyDepot);
 }
 
-void GoingToBuildSupplyDepot::Execute(SCV* scv)
+void GoingToBuildSupplyDepot::Execute(Entity *scv)
 {
     //LOG("GoingToBuildSupplyDepot", "Execute", scv);
-    if(scv->hasBuildUnit()) {
-        scv->unreserveMinerals();
-    } else if(!scv->isConstructing()&&scv->isIdle()) {
-        scv->ChangeState(Mining::Instance());
+    if(((SCV*)scv)->hasBuildUnit()) {
+        ((SCV*)scv)->unreserveMinerals();
+    } else if(!((SCV*)scv)->isConstructing()&&((SCV*)scv)->isIdle()) {
+        ((SCV*)scv)->GetSM()->ChangeState(Mining::Instance());
     } else {
         // Is constructing or on way to site.
     }
 }
 
-void GoingToBuildSupplyDepot::Exit(SCV* scv)
+void GoingToBuildSupplyDepot::Exit(Entity *scv)
 {
 	LOG("GoingToBuildSupplyDepot", "Exit", scv);
 }
@@ -139,14 +139,14 @@ std::string BuildingSupplyDepot::getName()
     return "BuildingSupplyDepot";
 }
 
-void BuildingSupplyDepot::Enter(SCV* scv)
+void BuildingSupplyDepot::Enter(Entity *scv)
 {
 }
 
-void BuildingSupplyDepot::Execute(SCV* scv)
+void BuildingSupplyDepot::Execute(Entity *scv)
 {
 }
 
-void BuildingSupplyDepot::Exit(SCV* scv)
+void BuildingSupplyDepot::Exit(Entity *scv)
 {
 }

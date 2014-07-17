@@ -1,62 +1,63 @@
-#ifndef SCV_STATES_H
-#define SCV_STATES_H
-#include "../State.h"
+#pragma once
 
+#include "State.h"
 #include <string>
 
-class SCV;
+//namespace Bot {
+//class Entity;
+//};
+using Bot::Entity;
 
 //------------------------------------
-class Idle : public State<SCV>
+class Idle : public EntityState
 {
 private:
   static Idle* instance;
-  Idle(): State<SCV>("Idle"){}
+  Idle(): EntityState("Idle"){}
 public:
   static Idle* Instance();
-  virtual void Enter(SCV* scv);
-  virtual void Execute(SCV* scv);
-  virtual void Exit(SCV* scv);
+  virtual void Enter(Entity *scv);
+  virtual void Execute(Entity *scv);
+  virtual void Exit(Entity *scv);
   virtual std::string getName();
 };
 
-class Mining : public State<SCV>
+class Mining : public EntityState
 {
 private:
   static Mining* instance;
-  Mining(): State<SCV>("Mining"){}
+  Mining(): EntityState("Mining"){}
 public:
   static Mining* Instance();
-  virtual void Enter(SCV* scv);
-  virtual void Execute(SCV* scv);
-  virtual void Exit(SCV* scv);
+  virtual void Enter(Entity *scv);
+  virtual void Execute(Entity *scv);
+  virtual void Exit(Entity *scv);
   virtual std::string getName();
 };
 
-class GoingToBuildSupplyDepot : public State<SCV>
+class GoingToBuildSupplyDepot : public EntityState
 {
 private:
     static GoingToBuildSupplyDepot* instance;
-     GoingToBuildSupplyDepot(): State<SCV>("GoingToBuildSupplyDepot"){}
+     GoingToBuildSupplyDepot(): EntityState("GoingToBuildSupplyDepot"){}
 public:
   static GoingToBuildSupplyDepot* Instance();
-  virtual void Enter(SCV* scv);
-  virtual void Execute(SCV* scv);
-  virtual void Exit(SCV* scv);
+  virtual void Enter(Entity *scv);
+  virtual void Execute(Entity *scv);
+  virtual void Exit(Entity *scv);
   virtual std::string getName();
 };
 
-class BuildingSupplyDepot : public State<SCV>
+class BuildingSupplyDepot : public EntityState
 {
 private:
   static BuildingSupplyDepot* instance;
-     BuildingSupplyDepot(): State<SCV>("BuildingSupplyDepot"){}
+     BuildingSupplyDepot(): EntityState("BuildingSupplyDepot"){}
 public:
   static BuildingSupplyDepot* Instance();
-  virtual void Enter(SCV* scv);
-  virtual void Execute(SCV* scv);
-  virtual void Exit(SCV* scv);
+  virtual void Enter(Entity *scv);
+  virtual void Execute(Entity *scv);
+  virtual void Exit(Entity *scv);
   virtual std::string getName();
 };
 
-#endif

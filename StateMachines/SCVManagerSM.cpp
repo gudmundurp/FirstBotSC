@@ -1,6 +1,6 @@
 #include "SCVManagerSM.h"
 #include "BWAPI.h"
-#include "SCV\SCV.h"
+#include "SCV/SCV.h"
 #include "WorldImpl.h"
 #include "../FirstBotSC/FirstBotSC.h"
 

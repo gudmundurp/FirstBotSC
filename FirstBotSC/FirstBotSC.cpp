@@ -175,8 +175,6 @@ void FirstBot::updateMicroStateMachines() {
         }
     }
 
-    //for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u )
-    //{
     for (auto iter = microStateMachines.begin(); iter != microStateMachines.end(); ++iter) {
         auto u = Broodwar->getUnit(iter->first);
         auto sm = iter->second;

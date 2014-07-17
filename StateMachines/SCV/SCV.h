@@ -1,59 +1,56 @@
-#ifndef SCV_H
-#define SCV_H
+#pragma once
 
-#include "../State.h"
-#include "../World.h"
-#include <string>
 #include "BWAPI.h"
+#include "World.h"
+#include "Entity.h"
+#include <string>
 
-class SCV {
+class SCV : public Bot::Entity {
 
 private:
 
-State<SCV>* _pCurrentState;
-bool _triedToBuildSupplyDepot;
-World* const _world;
-int _id;
+    EntityState* _pCurrentState;
+    bool _triedToBuildSupplyDepot;
+    World* const _world;
+    int _id;
 
 public:
-  int getID();
-  SCV(int id, World* world);
+    int getID();
+    SCV(int id, World* world);
 
-  void Update();
-  void ChangeState(State<SCV>* new_state);
+    void Update();
+    //void ChangeState(EntityState* new_state);
 
-  void TryToBuildSupplyDepot();
+    void TryToBuildSupplyDepot();
 
-  int checkMinerals();
-  int unusedSupply();
-  void nothing();
-  void startMining();
-  bool startedBuilding();
+    int checkMinerals();
+    int unusedSupply();
+    void nothing();
+    void startMining();
+    bool startedBuilding();
 
-  void reserveMinerals(int minerals);
-  void unreserveMinerals();
+    void reserveMinerals(int minerals);
+    void unreserveMinerals();
 
-  void build(BWAPI::UnitType type, BWAPI::TilePosition targetBuildLocation);
+    void build(BWAPI::UnitType type, BWAPI::TilePosition targetBuildLocation);
 
-  void buildSupplyDepot();
+    void buildSupplyDepot();
 
-  World* getWorld();
+    World* getWorld();
 
-  bool DidTryToBuildSupplyDepot();
-  std::string GetStateName();
+    bool DidTryToBuildSupplyDepot();
+    std::string GetStateName();
 
+    virtual void EnterFrame();
+    virtual void LeaveFrame(Advice advice);
 
-  /////////////////////
-
-
-  bool hasBuildUnit();
-  bool isConstructing();
-  bool isIdle();
+    bool hasBuildUnit();
+    bool isConstructing();
+    bool isIdle();
 
 private:
 #ifdef FIRSTBOT_UNIT_TEST
-	int unittest_state;
+    int unittest_state;
 #endif
 };
 
-#endif // SCV_H

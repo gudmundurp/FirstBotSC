@@ -65,7 +65,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>Catch\include;$(BWAPIIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;Catch\include;$(BWAPIIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -113,6 +113,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityStateMachine.h" />
+    <ClInclude Include="StateMachine.h" />
     <ClInclude Include="WorldImpl.h" />
     <ClInclude Include="Advice.h" />
     <ClInclude Include="ManagerSM.h" />
@@ -124,6 +127,7 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EntityStateMachine.cpp" />
     <ClCompile Include="WorldImpl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MockWorld.cpp" />
