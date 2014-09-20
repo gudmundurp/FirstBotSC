@@ -59,7 +59,7 @@ int StrategyStage::GetUnitCount(UnitTypeEnum unitTypeID)
 		if (!u->exists()) {
 			continue;
 		}
-		if (u->getType() == unitTypeID) {
+		if (u->getType() == unitTypeID && u->isCompleted()) {
 			count++;
 		}
 	}
