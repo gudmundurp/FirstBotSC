@@ -14,19 +14,25 @@ BuildFirstBarracks::~BuildFirstBarracks(void)
 
 Advice BuildFirstBarracks::GetAdvice()
 {
-    if(GetUnitCount(UnitTypeEnum::Terran_Barracks)) {
+    if(GetUnitCount(UnitTypeEnum::Terran_Barracks) >= 1) {
         Done();
         return Nothing;
-    }
-
-    if (_haveIssuedMyAdvice) {
-        return Nothing;
-    }
-
-    if (GetCurrent() >= 22 && GetMaximum() == 36) {
+    } else if (GetCurrent() >= 22) {
         if(GetMinerals() >= 150) {
-            _haveIssuedMyAdvice = true;
-            return BuildBarracks;
+			int countBarracksUnderConstruction = 0; // Take care of this here for now.
+			for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
+				if (!unit->exists()) {
+					continue;
+				}
+
+				if (unit->getType() == BWAPI::UnitTypes::Terran_SCV && unit->getBuildType() == BWAPI::UnitTypes::Terran_Barracks) {
+					countBarracksUnderConstruction++;
+				}
+			}
+
+			if (!countBarracksUnderConstruction) {
+				return BuildBarracks;
+			}
         }
     }
 

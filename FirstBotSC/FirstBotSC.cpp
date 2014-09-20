@@ -7,6 +7,8 @@
 #include "WorldImpl.h"
 #include <map>
 #include <ctime>
+#include <random>
+#include <set>
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
@@ -28,6 +30,10 @@ SharedManagerSMPointerMap managers;
 Unit findTrainer(UnitType type) {
   Unitset myUnits = Broodwar->self()->getUnits();
 	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
+        if ( u->getType() != type ) {
+            continue;
+        }
+
         // Ignore the unit if it no longer exists
         // Make sure to include this block when handling any Unit pointer!
         if ( !u->exists() )
@@ -45,9 +51,22 @@ Unit findTrainer(UnitType type) {
         if ( !u->isCompleted() || u->isConstructing() || u->isTraining() )
             continue;
 
-        if ( u->getType() == type ) {
-            return *u;
-        }
+		if (u->getType() == UnitTypes::Terran_SCV) {
+			if ( u->isIdle() || u->getOrder() == Orders::MoveToMinerals ) {
+				return *u;
+			}
+		} else {
+			// Assuming for now that we look for a barracks.
+			if ( u->getOrderTimer() < 2 ) {
+				UnitType::set trainingQueue = u->getTrainingQueue();
+				if ( trainingQueue.size() > 1 ) {
+					// TODO consider canceling something in the queue
+					continue;
+				}
+
+				return *u;
+			}
+		}
     }
 	return 0;
 }
@@ -56,17 +75,160 @@ Unit findTrainer(UnitType type) {
 
 int nobuildloc = 0;
 
-void searchAndDestroy() {
-    auto locations = Broodwar->getStartLocations();
+void searchAndDestroy(bool defend = false)
+{
+	static std::random_device rd;
+    static std::mt19937 gen(rd());
+	static std::uniform_real_distribution<> ruin;
 
-  Unitset myUnits = Broodwar->self()->getUnits();
-	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
-        if(u->getType() == Terran_Marine && !u->isAttacking()) {
-            for(auto location = locations.begin(); location != locations.end(); ++location) {
-                u->attack(Position(*location), true);
-            }
-        }
-    }
+	auto locations = Broodwar->getStartLocations();
+	std::vector<int> enemyAtLocation(locations.size(), 12);
+	std::vector<int> friendAtLocation(locations.size(), 12);
+	std::vector<int> controlZoneAtLocation(locations.size());
+	static std::set<Unit> scoutingUnits;
+
+	// Update enemy presence information
+	for (auto u : Broodwar->getAllUnits()) {
+		if (u->getPlayer() != Broodwar->self()) {
+			if (u->isVisible() && u->exists()) {
+				for (size_t idx = 0; idx < locations.size(); ++idx) {
+					enemyAtLocation[idx] = std::min(enemyAtLocation[idx], locations[idx].getApproxDistance(u->getTilePosition()));
+				}
+			}
+		}
+	}
+
+	// Update friendly presence information
+	for (auto u : Broodwar->self()->getUnits()) {
+		if (u->exists()) {
+			for (size_t idx = 0; idx < locations.size(); ++idx) {
+				friendAtLocation[idx] = std::min(friendAtLocation[idx], locations[idx].getApproxDistance(u->getTilePosition()));
+			}
+		}
+	}
+
+	// Update control zone depth
+	for (size_t idx = 0; idx < locations.size(); ++idx) {
+		controlZoneAtLocation[idx] = friendAtLocation[idx] - enemyAtLocation[idx];
+	}
+
+	// Chose the narrowest control zone
+	TilePosition attackPosition = locations.front();
+	int depth = controlZoneAtLocation.front();
+
+	for (size_t idx = 0; idx < locations.size(); ++idx) {
+		bool improvment = false;
+		if (depth < 0 && depth < controlZoneAtLocation[idx]) {
+			improvment = true;
+		} else if (controlZoneAtLocation[idx] > 0 && depth > controlZoneAtLocation[idx]) {
+			improvment = true;
+		} 
+
+		if (improvment) {
+			depth = controlZoneAtLocation[idx];
+			attackPosition = locations[idx];
+		}
+	}
+
+	TilePosition defencePosition = locations.front();
+	int defenceDepth = controlZoneAtLocation.front();
+	for (size_t idx = 0; idx < locations.size(); ++idx) {
+		bool improvment = false;
+		if (defenceDepth > 0 && defenceDepth > controlZoneAtLocation[idx]) {
+			improvment = true;
+		} else if (controlZoneAtLocation[idx] < 0 && defenceDepth < controlZoneAtLocation[idx]) {
+			improvment = true;
+		} 
+
+		if (improvment) {
+			defenceDepth = controlZoneAtLocation[idx];
+			defenceDepth = locations[idx];
+		}
+	}
+
+	// Clean up scouting units
+	std::vector<Unit> deadScouts;
+	for (auto u : scoutingUnits) {
+		if (!u->exists()) {
+			deadScouts.push_back(u);
+		}
+	}
+	for (Unit u : deadScouts) {
+		scoutingUnits.erase(u);
+	}
+
+	int countMarines = 0;
+	for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
+		if (!unit->exists()) {
+			continue;
+		}
+		if (unit->getType() == BWAPI::UnitTypes::Terran_Marine) {
+			countMarines++;
+		}
+	}
+
+	Unitset myUnits = Broodwar->self()->getUnits();
+	for (Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u) {
+		if (u->getType() != Terran_Marine) {
+			continue;
+		}
+		if (!u->exists()) {
+			continue;
+		}
+
+		Order order = u->getOrder();
+		if ((order == Orders::AttackMove || order == Orders::AttackTile || order == Orders::AttackUnit)
+			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 5)) {
+			// Try not to spam too much.
+			continue;
+		}
+
+		if (scoutingUnits.count(*u) && order == Orders::Move && (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000)) {
+			// Scouting takes time.
+			continue;
+		}
+
+		if (u->isAttackFrame()) {
+			// The unit is firing on the enemy.
+			continue;
+		}
+
+		// Checking if there is a present danger.
+		if (u->getOrderTarget() && u->getTarget() != u->getOrderTarget()) {
+			// The Unit is engaging the enemy.
+			continue;
+		}
+		
+		if (scoutingUnits.size() / (double)std::max(countMarines, 10) <= 0.04) {
+			// Use some of our available forces to scout.
+			std::vector<int> indexes(locations.size());
+			for (size_t n = 0; n < locations.size(); ++n) {
+				indexes[n] = n;
+			}
+
+			for (size_t n = 0; n < locations.size(); ++n) {
+				int m = int(locations.size() * ruin(gen));
+				std::swap(indexes[n], indexes[m]);
+			}
+
+			bool hasIssuedCommand = false;
+			for (int n : indexes) {
+				if (locations[n] != attackPosition) {
+					u->move(Position(locations[n]), hasIssuedCommand);
+					hasIssuedCommand = true;
+				}
+			}
+			scoutingUnits.insert(*u);
+		} else {
+			if (defend) {
+				u->move(Position(attackPosition), false);
+				scoutingUnits.erase(*u);
+			} else {
+				u->attack(Position(attackPosition), false);
+				scoutingUnits.erase(*u);
+			}
+		}
+	}
 }
 
 int getAvailableMinerals() {
@@ -217,15 +379,15 @@ void FirstBot::updateManagerStateMachines(Advice advice) {
     }
 
     if (advice == TrainMarine) {
-        Unit scv_bw = findTrainer(UnitTypes::Terran_Marine);
-        if(!scv_bw) {
+        Unit trainer = findTrainer(UnitTypes::Terran_Barracks);
+        if(!trainer) {
             Broodwar->sendText("Enginn builder/trainer fannst");
         } else {
-            scv_bw->train(UnitTypes::Terran_Marine);
+            trainer->train(UnitTypes::Terran_Marine);
         }
     }
     if (advice == Attack) {
         Broodwar->sendText("Attacking");
-        searchAndDestroy();
     }
+	searchAndDestroy(advice != Attack);
 }

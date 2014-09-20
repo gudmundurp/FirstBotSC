@@ -3,8 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <BWAPILibDir>$(BWAPIDir)\lib</BWAPILibDir>
-    <BWAPIIncludeDir>$(BWAPIDIR)\include</BWAPIIncludeDir>
-    <BWAPIDir>D:\src\bwapi\bwapi</BWAPIDir>
+    <BWAPIIncludeDir>$(BWAPIDir)\include</BWAPIIncludeDir>
   </PropertyGroup>
   <PropertyGroup>
     <_PropertySheetDisplayName>BWAPI</_PropertySheetDisplayName>
@@ -16,9 +15,6 @@
     </BuildMacro>
     <BuildMacro Include="BWAPIIncludeDir">
       <Value>$(BWAPIIncludeDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="BWAPIDir">
-      <Value>$(BWAPIDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

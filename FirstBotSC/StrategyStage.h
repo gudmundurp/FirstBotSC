@@ -31,8 +31,6 @@ protected:
     Gas GetGas();
     int GetUnitCount(UnitTypeEnum unitTypeID);
 
-    bool _haveIssuedMyAdvice;
-
     void Done();
 
 private:

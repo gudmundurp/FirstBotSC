@@ -6,7 +6,7 @@ using namespace BWAPI;
 namespace strategy {
 
 StrategyStage::StrategyStage(const std::string& name)
-    : _name(name), _isDone(false), _haveIssuedMyAdvice(false)
+    : _name(name), _isDone(false)
 {
 }
 

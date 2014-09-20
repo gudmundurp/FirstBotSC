@@ -3,10 +3,13 @@
 #include <BWAPI.h>
 #include "Advice.h"
 #include "SCV/SCV.h"
+#include <memory>
 
 typedef std::shared_ptr<SCV> SharedMicroSMPtr;
 typedef std::map<int, SharedMicroSMPtr> SharedMicroSMPtrMap;
 extern SharedMicroSMPtrMap microStateMachines;
+
+BWAPI::Unit findTrainer(BWAPI::UnitType type);
 
 class FirstBot : public BWAPI::AIModule
 {

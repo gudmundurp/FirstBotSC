@@ -17,15 +17,22 @@ Advice BuildSecondSupplyDepot::GetAdvice()
     if (GetUnitCount(UnitTypeEnum::Terran_Supply_Depot) >= 2) {
         Done();
         return Nothing;
-    }
-    if (_haveIssuedMyAdvice) {
-        return Nothing;
-    }
-
-    if (GetCurrent() >= 30 && GetMaximum() == 36) {
+    } else if (GetCurrent() >= 30) {
         if (GetMinerals() >= 100) {
-            _haveIssuedMyAdvice = true;
-            return BuildSD;
+			int countSDUnderConstruction = 0; // Take care of this here for now.
+			for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
+				if (!unit->exists()) {
+					continue;
+				}
+
+				if (unit->getType() == BWAPI::UnitTypes::Terran_SCV && unit->getBuildType() == BWAPI::UnitTypes::Terran_Supply_Depot) {
+					countSDUnderConstruction++;
+				}
+			}
+
+			if (!countSDUnderConstruction) {
+				return BuildSD;
+			}
         }
     }
 
