@@ -63,7 +63,7 @@ Advice RushStrategy::GetAdvice()
     }
 
 	// Collect forces and attack in force.
-	if (countMarines > 2 * supply) {
+	if (countMarines >= 10) {
 		return Attack;
 	} else {
 		return Nothing; // Defend

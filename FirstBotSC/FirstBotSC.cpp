@@ -80,69 +80,16 @@ void searchAndDestroy(bool defend = false)
 	static std::random_device rd;
     static std::mt19937 gen(rd());
 	static std::uniform_real_distribution<> ruin;
-
+	
 	auto locations = Broodwar->getStartLocations();
-	std::vector<int> enemyAtLocation(locations.size(), 12);
-	std::vector<int> friendAtLocation(locations.size(), 12);
-	std::vector<int> controlZoneAtLocation(locations.size());
+
 	static std::set<Unit> scoutingUnits;
 
-	// Update enemy presence information
-	for (auto u : Broodwar->getAllUnits()) {
-		if (u->getPlayer() != Broodwar->self()) {
-			if (u->isVisible() && u->exists()) {
-				for (size_t idx = 0; idx < locations.size(); ++idx) {
-					enemyAtLocation[idx] = std::min(enemyAtLocation[idx], locations[idx].getApproxDistance(u->getTilePosition()));
-				}
-			}
-		}
-	}
-
-	// Update friendly presence information
-	for (auto u : Broodwar->self()->getUnits()) {
-		if (u->exists()) {
-			for (size_t idx = 0; idx < locations.size(); ++idx) {
-				friendAtLocation[idx] = std::min(friendAtLocation[idx], locations[idx].getApproxDistance(u->getTilePosition()));
-			}
-		}
-	}
-
-	// Update control zone depth
-	for (size_t idx = 0; idx < locations.size(); ++idx) {
-		controlZoneAtLocation[idx] = friendAtLocation[idx] - enemyAtLocation[idx];
-	}
-
-	// Chose the narrowest control zone
+	TilePosition defencePosition = Broodwar->self()->getStartLocation();
 	TilePosition attackPosition = locations.front();
-	int depth = controlZoneAtLocation.front();
-
-	for (size_t idx = 0; idx < locations.size(); ++idx) {
-		bool improvment = false;
-		if (depth < 0 && depth < controlZoneAtLocation[idx]) {
-			improvment = true;
-		} else if (controlZoneAtLocation[idx] > 0 && depth > controlZoneAtLocation[idx]) {
-			improvment = true;
-		} 
-
-		if (improvment) {
-			depth = controlZoneAtLocation[idx];
-			attackPosition = locations[idx];
-		}
-	}
-
-	TilePosition defencePosition = locations.front();
-	int defenceDepth = controlZoneAtLocation.front();
-	for (size_t idx = 0; idx < locations.size(); ++idx) {
-		bool improvment = false;
-		if (defenceDepth > 0 && defenceDepth > controlZoneAtLocation[idx]) {
-			improvment = true;
-		} else if (controlZoneAtLocation[idx] < 0 && defenceDepth < controlZoneAtLocation[idx]) {
-			improvment = true;
-		} 
-
-		if (improvment) {
-			defenceDepth = controlZoneAtLocation[idx];
-			defenceDepth = locations[idx];
+	for (auto location : locations) {
+		if (location != defencePosition) {
+			attackPosition = location;
 		}
 	}
 
@@ -178,7 +125,7 @@ void searchAndDestroy(bool defend = false)
 
 		Order order = u->getOrder();
 		if ((order == Orders::AttackMove || order == Orders::AttackTile || order == Orders::AttackUnit)
-			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 100)) {
+			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000)) {
 			// Try not to spam too much.
 			continue;
 		}
@@ -199,28 +146,32 @@ void searchAndDestroy(bool defend = false)
 			continue;
 		}
 		
-		if (scoutingUnits.size() / (double)countMarines <= 0.04) {
+		if ((scoutingUnits.size() / (double)countMarines) <= 0.04) {
 			// Use some of our available forces to scout.
 			std::vector<int> indexes(locations.size());
 			for (size_t n = 0; n < locations.size(); ++n) {
-				indexes[n] = n;
+				if (locations[n] != Broodwar->self()->getStartLocation()) {
+					indexes[n] = n;
+				}
 			}
 
-			for (size_t n = 0; n < locations.size(); ++n) {
-				int m = int(locations.size() * ruin(gen));
+			for (size_t n = 0; n < indexes.size(); ++n) {
+				int m = int(indexes.size() * ruin(gen));
 				std::swap(indexes[n], indexes[m]);
 			}
 
 			bool hasIssuedCommand = false;
 			for (int n : indexes) {
-				if (locations[n] != attackPosition) {
-					u->move(Position(locations[n]), hasIssuedCommand);
-					hasIssuedCommand = true;
-				}
+				u->move(Position(locations[n]), hasIssuedCommand);
+				hasIssuedCommand = true;
 			}
 			scoutingUnits.insert(*u);
 		} else {
-			u->attack(Position(attackPosition), false);
+			if (defend) {
+				u->attack(Position(defencePosition), false);
+			} else {
+				u->attack(Position(attackPosition), false);
+			}
 			scoutingUnits.erase(*u);
 		}
 	}
