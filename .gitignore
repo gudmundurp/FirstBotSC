@@ -15,6 +15,7 @@ BWAPIUserOverrides.props
 
 [Dd]ebug/
 [Rr]elease/
+[Ee]xecutable/
 x64/
 build/
 [Bb]in/
@@ -27,6 +28,7 @@ build/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+*.exe
 *_i.c
 *_p.c
 *_i.h
