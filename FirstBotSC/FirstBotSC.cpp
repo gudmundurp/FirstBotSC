@@ -178,7 +178,7 @@ void searchAndDestroy(bool defend = false)
 
 		Order order = u->getOrder();
 		if ((order == Orders::AttackMove || order == Orders::AttackTile || order == Orders::AttackUnit)
-			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 5)) {
+			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 100)) {
 			// Try not to spam too much.
 			continue;
 		}
@@ -199,7 +199,7 @@ void searchAndDestroy(bool defend = false)
 			continue;
 		}
 		
-		if (scoutingUnits.size() / (double)std::max(countMarines, 10) <= 0.04) {
+		if (scoutingUnits.size() / (double)countMarines <= 0.04) {
 			// Use some of our available forces to scout.
 			std::vector<int> indexes(locations.size());
 			for (size_t n = 0; n < locations.size(); ++n) {
@@ -220,13 +220,8 @@ void searchAndDestroy(bool defend = false)
 			}
 			scoutingUnits.insert(*u);
 		} else {
-			if (defend) {
-				u->move(Position(attackPosition), false);
-				scoutingUnits.erase(*u);
-			} else {
-				u->attack(Position(attackPosition), false);
-				scoutingUnits.erase(*u);
-			}
+			u->attack(Position(attackPosition), false);
+			scoutingUnits.erase(*u);
 		}
 	}
 }
