@@ -37,26 +37,20 @@ Advice RushStrategy::GetAdvice()
 		}
 	}
 
+	int countBarracks = GetUnitCount(UnitTypeEnum::Terran_Barracks);
+	int countMarines = GetUnitCount(UnitTypeEnum::Terran_Marine);
+
+	int timeToBuildSD = 10 + BWAPI::UnitTypes::Terran_Supply_Depot.buildTime();
+	double marineProductionToNewSupplyDepot = timeToBuildSD * countBarracks / (double)BWAPI::UnitTypes::Terran_Marine.buildTime();
+	double scvProductionToNewSupplyDepot = timeToBuildSD * 1.0 / (double)BWAPI::UnitTypes::Terran_SCV.buildTime();
 	
-	if ( supply < 2 && GetMinerals() >= 100 && !countSDUnderConstruction ) {
-		return BuildSD;
-	}
-
-	int countBarracks = 0;
-	int countMarines = 0;
-	for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
-		if (!unit->exists()) {
-			continue;
-		}
-
-		if (unit->getType() == BWAPI::UnitTypes::Terran_Barracks) {
-			countBarracks++;
-		} else if (unit->getType() == BWAPI::UnitTypes::Terran_Marine) {
-			countMarines++;
+	if (GetMinerals() >= 100) {
+		if (8 * countSDUnderConstruction + supply <= std::ceil(marineProductionToNewSupplyDepot + scvProductionToNewSupplyDepot)) {
+			return BuildSD;
 		}
 	}
 
-	if ( GetMinerals() >= std::max(150, 50 * countBarracks) && countMarines / (double)countBarracks > 2.5 ) {
+	if ( GetMinerals() >= std::max(200, 50 * countBarracks)) {
 		if (!countBarracksUnderConstruction) {
 			return BuildBarracks;
 		}

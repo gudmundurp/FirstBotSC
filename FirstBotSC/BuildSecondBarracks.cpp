@@ -17,8 +17,8 @@ Advice BuildSecondBarracks::GetAdvice()
     if (GetUnitCount(UnitTypeEnum::Terran_Barracks) >= 2) {
         Done();
         return Nothing;
-    } else if (GetCurrent() >= 26) {
-        if(GetMinerals() >= 150) {
+    } else if (GetCurrent() >= 18) {
+        if(GetMinerals() >= 100) {
 			int countBarracksUnderConstruction = 0; // Take care of this here for now.
 			for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
 				if (!unit->exists()) {
@@ -30,7 +30,7 @@ Advice BuildSecondBarracks::GetAdvice()
 				}
 			}
 
-			if (!countBarracksUnderConstruction) {
+			if (countBarracksUnderConstruction + GetUnitCount(UnitTypeEnum::Terran_Barracks) < 2) {
 				return BuildBarracks;
 			}
         }

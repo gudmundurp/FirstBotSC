@@ -51,17 +51,19 @@ void StrategyStage::Done()
     _isDone = true;
 }
 
- int StrategyStage::GetUnitCount(UnitTypeEnum unitTypeID) 
- {
-    int count = 0;
-  Unitset myUnits = Broodwar->self()->getUnits();
-	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
-
-        if ( u->getType() == unitTypeID ) {
-            count++;
-        }
-    }
-    return count;
- }
+int StrategyStage::GetUnitCount(UnitTypeEnum unitTypeID)
+{
+	int count = 0;
+	Unitset myUnits = Broodwar->self()->getUnits();
+	for (Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u) {
+		if (!u->exists()) {
+			continue;
+		}
+		if (u->getType() == unitTypeID) {
+			count++;
+		}
+	}
+	return count;
+}
 
 }

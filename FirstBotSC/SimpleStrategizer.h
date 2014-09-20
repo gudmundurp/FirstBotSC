@@ -20,9 +20,8 @@ private :
     void ChangeStage(Step stage);
 
     BuildFirstSupplyDepot stage1;
-    BuildFirstBarracks stage2;
-    BuildSecondBarracks stage3;
-    BuildSecondSupplyDepot stage4;
+    BuildSecondBarracks stage2;
+    BuildSecondSupplyDepot stage3;
     RushStrategy rush;
 };
 
