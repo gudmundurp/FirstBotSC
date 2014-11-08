@@ -40,7 +40,7 @@ Advice RushStrategy::GetAdvice()
 	int countBarracks = GetUnitCount(UnitTypeEnum::Terran_Barracks);
 	int countMarines = GetUnitCount(UnitTypeEnum::Terran_Marine);
 
-	int timeToBuildSD = 10 + BWAPI::UnitTypes::Terran_Supply_Depot.buildTime();
+	int timeToBuildSD = BWAPI::Broodwar->getRemainingLatencyFrames() + estimateConstructionTime(UnitTypeEnum::Terran_Supply_Depot);
 	double marineProductionToNewSupplyDepot = timeToBuildSD * countBarracks / (double)BWAPI::UnitTypes::Terran_Marine.buildTime();
 	double scvProductionToNewSupplyDepot = timeToBuildSD * 1.0 / (double)BWAPI::UnitTypes::Terran_SCV.buildTime();
 	

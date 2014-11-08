@@ -33,6 +33,11 @@ protected:
 
     void Done();
 
+	static int StrategyStage::manhattanDistance(const BWAPI::TilePosition& a, const BWAPI::TilePosition& b);
+
+	// unittype must be a building
+	static int StrategyStage::estimateConstructionTime(UnitTypeEnum id);
+
 private:
     const std::string _name;
     bool _isDone;
