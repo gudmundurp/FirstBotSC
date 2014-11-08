@@ -51,12 +51,26 @@ private:
 	public:
 		PointOfInterest(const PositionOrUnit& u) :m_position(u) {};
 		PointOfInterest(const TilePosition& p) :m_position(Position(p)) {};
+		PointOfInterest(const Unit& u) :m_position(u) {};
+
 		operator TilePosition() const {
 			if (m_position.isPosition())
 				return TilePosition(m_position.getPosition());
 			else
 				return m_position.getUnit()->getTilePosition();
 		}
+
+		operator Unit() const {
+			if (m_position.isPosition())
+				return NULL;
+			else
+				return m_position.getUnit();
+		}
+
+		bool isUnit() { return m_position.isUnit(); }
+		bool isPosition() { return m_position.isPosition(); }
+		Unit getUnit() { return m_position.getUnit(); }
+		//bool isPosition() { return m_position.isPosition(); }
 
 		bool operator<(const PointOfInterest& rhs) const {
 			return m_position < rhs.m_position;
@@ -85,6 +99,14 @@ private:
 
 		size_type size() {
 			return m_members.size();
+		}
+
+		std::pair<iterator, bool> insert(const PointOfInterest& point) {
+			return m_members.insert(point);
+		}
+
+		bool erase(const PointOfInterest& point) {
+			return m_members.erase(point);
 		}
 
 	private:

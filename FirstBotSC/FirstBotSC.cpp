@@ -94,10 +94,23 @@ void FirstBot::searchAndDestroy(bool defend)
 
 	static std::set<Unit> scoutingUnits;
 
+	for (Unit u : BWAPI::Broodwar->enemy()->getUnits()) {
+		if (!u->getType().isBuilding()) {
+			continue;
+		}
+		if (u->exists() && u->isVisible()) {
+		   pointsOfInterest.insert(u);
+		}
+		else if(!u->exists() && Broodwar->isVisible(u->getTilePosition())) {
+			pointsOfInterest.erase(u);
+		}
+	}
+
+
 	TilePosition defencePosition = Broodwar->self()->getStartLocation();
 	TilePosition attackPosition = *pointsOfInterest.begin();
-	for (TilePosition location : pointsOfInterest) {
-		if (location != defencePosition) {
+	for (PointOfInterest location : pointsOfInterest) {
+		if (static_cast<TilePosition>(location) != defencePosition) {
 			attackPosition = location;
 		}
 	}
@@ -113,6 +126,7 @@ void FirstBot::searchAndDestroy(bool defend)
 			countMarines++;
 		}
 	}
+
 
 	Unitset myUnits = Broodwar->self()->getUnits();
 	for (Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u) {
