@@ -27,6 +27,9 @@ typedef std::map<int, SharedManagerSMPointer> SharedManagerSMPointerMap;
 
 SharedManagerSMPointerMap managers;
 
+int nobuildloc = 0;
+
+
 Unit findTrainer(UnitType type) {
   Unitset myUnits = Broodwar->self()->getUnits();
 	for ( Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u ) {
@@ -71,31 +74,9 @@ Unit findTrainer(UnitType type) {
 	return 0;
 }
 
-
-
-int nobuildloc = 0;
-
-void searchAndDestroy(bool defend = false)
-{
-	static std::random_device rd;
-    static std::mt19937 gen(rd());
-	static std::uniform_real_distribution<> ruin;
-	
-	auto locations = Broodwar->getStartLocations();
-
-	static std::set<Unit> scoutingUnits;
-
-	TilePosition defencePosition = Broodwar->self()->getStartLocation();
-	TilePosition attackPosition = locations.front();
-	for (auto location : locations) {
-		if (location != defencePosition) {
-			attackPosition = location;
-		}
-	}
-
-	// Clean up scouting units
+void cleanUpDeadScouts(std::set<Unit> scoutingUnits) {
 	std::vector<Unit> deadScouts;
-	for (auto u : scoutingUnits) {
+	for (Unit u : scoutingUnits) {
 		if (!u->exists()) {
 			deadScouts.push_back(u);
 		}
@@ -103,6 +84,25 @@ void searchAndDestroy(bool defend = false)
 	for (Unit u : deadScouts) {
 		scoutingUnits.erase(u);
 	}
+}
+
+void FirstBot::searchAndDestroy(bool defend)
+{
+	static std::random_device rd;
+    static std::mt19937 gen(rd());
+	static std::uniform_real_distribution<> ruin;
+
+	static std::set<Unit> scoutingUnits;
+
+	TilePosition defencePosition = Broodwar->self()->getStartLocation();
+	TilePosition attackPosition = *pointsOfInterest.begin();
+	for (TilePosition location : pointsOfInterest) {
+		if (location != defencePosition) {
+			attackPosition = location;
+		}
+	}
+
+	cleanUpDeadScouts(scoutingUnits);
 
 	int countMarines = 0;
 	for (auto unit : BWAPI::Broodwar->self()->getUnits()) {
@@ -148,10 +148,11 @@ void searchAndDestroy(bool defend = false)
 		
 		if ((scoutingUnits.size() / (double)countMarines) <= 0.04) {
 			// Use some of our available forces to scout.
-			std::vector<int> indexes(locations.size());
-			for (size_t n = 0; n < locations.size(); ++n) {
-				if (locations[n] != Broodwar->self()->getStartLocation()) {
-					indexes[n] = n;
+			std::vector<PointOfInterestSet::iterator> indexes;
+			indexes.reserve(pointsOfInterest.size());
+			for (PointOfInterestSet::iterator iter = pointsOfInterest.begin(); iter != pointsOfInterest.end(); ++iter) {
+				if (static_cast<TilePosition>(*iter) != Broodwar->self()->getStartLocation()) {
+					indexes.push_back(iter);
 				}
 			}
 
@@ -161,8 +162,8 @@ void searchAndDestroy(bool defend = false)
 			}
 
 			bool hasIssuedCommand = false;
-			for (int n : indexes) {
-				u->move(Position(locations[n]), hasIssuedCommand);
+			for (auto iter : indexes) {
+				u->move(Position(static_cast<TilePosition>(*iter)), hasIssuedCommand);
 				hasIssuedCommand = true;
 			}
 			scoutingUnits.insert(*u);
@@ -189,7 +190,9 @@ int getAvailableMinerals() {
 int speed = 0;
 void FirstBot :: onStart() {
     Broodwar->sendText("Hello world!");
-    
+
+	pointsOfInterest = Broodwar->getStartLocations();
+
     Broodwar->setLocalSpeed(speed);
     //Broodwar->setFrameSkip(16);
     Broodwar->setGUI(true);
@@ -336,4 +339,13 @@ void FirstBot::updateManagerStateMachines(Advice advice) {
         Broodwar->sendText("Attacking");
     }
 	searchAndDestroy(advice != Attack);
+}
+
+bool operator<(const PositionOrUnit& lhs, const PositionOrUnit& rhs) {
+	if (lhs.isPosition()) {
+		return rhs.isUnit() || lhs.getPosition() < rhs.getPosition();
+	}
+	else {
+		return rhs.isUnit() && lhs.getUnit() < rhs.getUnit();
+	}
 }

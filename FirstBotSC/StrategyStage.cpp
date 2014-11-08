@@ -73,7 +73,7 @@ int StrategyStage::manhattanDistance(const BWAPI::TilePosition& a, const BWAPI::
 	return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 }
 
-const double SCV_THROTLE_APPROXIMATION = 0.8
+const double SCV_THROTLE_APPROXIMATION = 0.8;
 
 // unittype must be a building
 int StrategyStage::estimateConstructionTime(UnitTypeEnum id)

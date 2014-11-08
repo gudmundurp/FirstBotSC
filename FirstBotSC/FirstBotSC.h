@@ -4,12 +4,17 @@
 #include "Advice.h"
 #include "SCV/SCV.h"
 #include <memory>
+#include <set>
+
+using namespace BWAPI;
 
 typedef std::shared_ptr<SCV> SharedMicroSMPtr;
 typedef std::map<int, SharedMicroSMPtr> SharedMicroSMPtrMap;
 extern SharedMicroSMPtrMap microStateMachines;
 
-BWAPI::Unit findTrainer(BWAPI::UnitType type);
+Unit findTrainer(BWAPI::UnitType type);
+
+bool operator<(const PositionOrUnit& lhs, const PositionOrUnit& rhs);
 
 class FirstBot : public BWAPI::AIModule
 {
@@ -39,4 +44,53 @@ class FirstBot : public BWAPI::AIModule
     virtual void onUnitRenegade(BWAPI::Unit unit);
     virtual void onSaveGame(std::string gameName);
     virtual void onUnitComplete(BWAPI::Unit unit);*/
+	void searchAndDestroy(bool defend);
+
+private:
+	class PointOfInterest {
+	public:
+		PointOfInterest(const PositionOrUnit& u) :m_position(u) {};
+		PointOfInterest(const TilePosition& p) :m_position(Position(p)) {};
+		operator TilePosition() const {
+			if (m_position.isPosition())
+				return TilePosition(m_position.getPosition());
+			else
+				return m_position.getUnit()->getTilePosition();
+		}
+
+		bool operator<(const PointOfInterest& rhs) const {
+			return m_position < rhs.m_position;
+		}
+	private:
+		PositionOrUnit m_position;
+	};
+
+	class PointOfInterestSet {
+	public:
+		PointOfInterestSet()
+		{ }
+
+		PointOfInterestSet(const TilePosition::set& tilePositions) 
+			: m_members(tilePositions.begin(), tilePositions.end())
+		{ }
+
+		typedef std::set<PointOfInterest>::iterator iterator;
+		typedef std::set<PointOfInterest>::size_type size_type;
+		iterator begin() {
+			return m_members.begin();
+		};
+		iterator end(){
+			return m_members.end();
+		};
+
+		size_type size() {
+			return m_members.size();
+		}
+
+	private:
+		std::set<PointOfInterest> m_members;
+	};
+
+	PointOfInterestSet pointsOfInterest;
+	std::map<Unit, PointOfInterest> enemyBuildings;
 };
