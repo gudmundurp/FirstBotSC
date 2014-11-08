@@ -96,6 +96,9 @@ void FirstBot::searchAndDestroy(bool defend)
 	static std::set<Unit> attackingUnits;
 
 	for (Unit u : BWAPI::Broodwar->enemy()->getUnits()) {
+		if (Broodwar->getStartLocations().find(u->getTilePosition()) != Broodwar->getStartLocations().end()) {
+			continue;
+		}
 		if (!u->getType().isBuilding()) {
 			continue;
 		}
@@ -105,15 +108,20 @@ void FirstBot::searchAndDestroy(bool defend)
 		else if(!u->exists() && Broodwar->isVisible(u->getTilePosition())) {
 			pointsOfInterest.erase(u);
 		}
+		if (u->getPosition().x > Broodwar->mapWidth() || u->getPosition().y > Broodwar->mapHeight()) {
+			pointsOfInterest.erase(u);
+		}
 	}
 
 	TilePosition defencePosition = Broodwar->self()->getStartLocation();
 	TilePosition attackPosition = *pointsOfInterest.begin();
+	TilePosition scoutPosition = *(std::next(pointsOfInterest.begin(), ruin(gen) * pointsOfInterest.size()));
 	for (PointOfInterest location : pointsOfInterest) {
 		if (static_cast<TilePosition>(location) != defencePosition) {
 			attackPosition = location;
 		}
 	}
+	Broodwar->sendText("x %d; y %d", attackPosition.x, attackPosition.y);
 
 	cleanUpDeadScouts(scoutingUnits);
 
@@ -144,7 +152,7 @@ void FirstBot::searchAndDestroy(bool defend)
 			continue;
 		}
 
-		if (scoutingUnits.count(*u) && order == Orders::Move && (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000)) {
+		if (scoutingUnits.count(*u) && order == Orders::Move && (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000 * Broodwar->getLatencyFrames())) {
 			// Scouting takes time.
 			continue;
 		}
@@ -353,7 +361,7 @@ void FirstBot::updateManagerStateMachines(Advice advice) {
         }
     }
     if (advice == Attack) {
-        Broodwar->sendText("Attacking");
+        //Broodwar->sendText("Attacking");
     }
 	searchAndDestroy(advice != Attack);
 }

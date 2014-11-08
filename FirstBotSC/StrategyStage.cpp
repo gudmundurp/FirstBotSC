@@ -95,7 +95,7 @@ int StrategyStage::estimateConstructionTime(UnitTypeEnum id)
 		errno = 0;
 		if (_snprintf(buf, sizeof(buf), "Travel time is %d", travelTime) > 0 || errno == ERANGE) {
 			buf[sizeof(buf) - 1] = '\0';
-			Broodwar->sendText(buf);
+			//Broodwar->sendText(buf);
 		}
 		return ceil(distance / approxSpeed) + unittype.buildTime();
 	} else {
