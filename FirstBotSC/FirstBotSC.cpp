@@ -93,6 +93,7 @@ void FirstBot::searchAndDestroy(bool defend)
 	static std::uniform_real_distribution<> ruin;
 
 	static std::set<Unit> scoutingUnits;
+	static std::set<Unit> attackingUnits;
 
 	for (Unit u : BWAPI::Broodwar->enemy()->getUnits()) {
 		if (!u->getType().isBuilding()) {
@@ -105,7 +106,6 @@ void FirstBot::searchAndDestroy(bool defend)
 			pointsOfInterest.erase(u);
 		}
 	}
-
 
 	TilePosition defencePosition = Broodwar->self()->getStartLocation();
 	TilePosition attackPosition = *pointsOfInterest.begin();
@@ -160,8 +160,9 @@ void FirstBot::searchAndDestroy(bool defend)
 			continue;
 		}
 		
-		if ((scoutingUnits.size() / (double)countMarines) <= 0.04) {
-			// Use some of our available forces to scout.
+		if (!attackingUnits.count(*u) && (scoutingUnits.size() / (double)countMarines) <= 0.04) {
+			// Use some of our available forces to scout.)
+
 			std::vector<PointOfInterestSet::iterator> indexes;
 			indexes.reserve(pointsOfInterest.size());
 			for (PointOfInterestSet::iterator iter = pointsOfInterest.begin(); iter != pointsOfInterest.end(); ++iter) {
@@ -182,9 +183,11 @@ void FirstBot::searchAndDestroy(bool defend)
 			}
 			scoutingUnits.insert(*u);
 		} else {
+
 			if (defend) {
 				u->attack(Position(defencePosition), false);
 			} else {
+				attackingUnits.insert(*u);
 				u->attack(Position(attackPosition), false);
 			}
 			scoutingUnits.erase(*u);
