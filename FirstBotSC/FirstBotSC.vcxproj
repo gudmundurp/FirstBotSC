@@ -108,6 +108,7 @@
     <ClInclude Include="RushStrategy.h" />
     <ClInclude Include="SimpleStrategizer.h" />
     <ClInclude Include="StrategyStage.h" />
+    <ClInclude Include="FrameTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BuildFirstBarracks.cpp" />

@@ -5,6 +5,7 @@
 #include "SCV\SCV.h"
 #include "SCVManagerSM.h"
 #include "WorldImpl.h"
+#include "FrameTime.h"
 #include <map>
 #include <ctime>
 #include <random>
@@ -147,12 +148,12 @@ void FirstBot::searchAndDestroy(bool defend)
 
 		Order order = u->getOrder();
 		if ((order == Orders::AttackMove || order == Orders::AttackTile || order == Orders::AttackUnit)
-			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000)) {
+			&& (Broodwar->getFrameCount() - u->getLastCommandFrame() < LOGICAL_FRAME(1000))) {
 			// Try not to spam too much.
 			continue;
 		}
 
-		if (scoutingUnits.count(*u) && order == Orders::Move && (Broodwar->getFrameCount() - u->getLastCommandFrame() < 1000 * Broodwar->getLatencyFrames())) {
+		if (scoutingUnits.count(*u) && order == Orders::Move && (Broodwar->getFrameCount() - u->getLastCommandFrame() < LOGICAL_FRAME(1000))) {
 			// Scouting takes time.
 			continue;
 		}

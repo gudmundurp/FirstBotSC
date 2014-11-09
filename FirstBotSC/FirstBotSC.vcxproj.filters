@@ -48,6 +48,9 @@
     <ClInclude Include="RushStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrameTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstBotSC.cpp">
