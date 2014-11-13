@@ -28,6 +28,7 @@ class FirstBot : public BWAPI::AIModule
 	virtual void onUnitShow(BWAPI::Unit unit);
 	virtual void onUnitHide(BWAPI::Unit unit);
 	virtual void onUnitDestroy(BWAPI::Unit unit);
+	virtual void onUnitCreate(BWAPI::Unit unit);
     /*
         virtual void onUnitComplete(BWAPI::Unit unit);
     virtual void onUnitCreate(BWAPI::Unit unit);
@@ -49,6 +50,7 @@ class FirstBot : public BWAPI::AIModule
     virtual void onSaveGame(std::string gameName);
     virtual void onUnitComplete(BWAPI::Unit unit);*/
 	void searchAndDestroy(bool defend);
+	void estimateMaximumEfficientWorkersForOneBase();
 
 private:
 	class PointOfInterest {
@@ -132,4 +134,7 @@ private:
 
 	char* getEnemyCommandCenterString();
 	VisibilityState enemyCommandCenter = UNKNOWN;
+
+	size_t maximumWorkers;
+	size_t currentWorkers;
 };

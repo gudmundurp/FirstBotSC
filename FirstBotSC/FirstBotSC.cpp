@@ -251,12 +251,29 @@ void FirstBot::onUnitDestroy(Unit u) {
 		enemyBuildings.erase(u);
 		pointsOfInterest.erase(u);
 	}
+	else if (u->getPlayer() == Broodwar->self()) {
+		if (u->getType().isWorker()) {
+			currentWorkers--;
+		}
+	}
+}
+
+void FirstBot::onUnitCreate(Unit u) {
+	if (u->getPlayer() == Broodwar->self()) {
+		if (u->getType().isWorker()) {
+			currentWorkers++;
+		}
+	}
 }
 
 void FirstBot::onUnitHide(Unit u) {
 	if (u->getPlayer()->isEnemy(Broodwar->self()) && u->getType().isResourceDepot()) {
 		enemyCommandCenter = HIDDEN;
 	}
+}
+
+void FirstBot::estimateMaximumEfficientWorkersForOneBase() {
+	maximumWorkers = Broodwar->getUnitsInRadius(Broodwar->self()->getStartLocation().x, Broodwar->self()->getStartLocation().y, 1000, IsMineralField).size()*3;
 }
 
 int speed = 0;
@@ -268,7 +285,8 @@ void FirstBot :: onStart() {
     Broodwar->setLocalSpeed(speed);
     //Broodwar->setFrameSkip(16);
     Broodwar->setGUI(true);
-  
+    
+	estimateMaximumEfficientWorkersForOneBase();
 
     Broodwar->enableFlag(Flag::UserInput);
 
@@ -319,6 +337,8 @@ void FirstBot :: onFrame() {
         Broodwar->self()->supplyTotal()/2);*/
 	Broodwar->drawTextScreen(200, 80, "Enemy Command Center: %10s", getEnemyCommandCenterString());
     Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
+	Broodwar->drawTextScreen(200, 120, "Max workers: %d", maximumWorkers);
+	Broodwar->drawTextScreen(200, 140, "Current workers: %d", currentWorkers);
 
     auto mousePosition = Broodwar->getMousePosition();
     auto mouseState = Broodwar->getMouseState(MouseButton::M_LEFT);
@@ -368,6 +388,8 @@ void FirstBot::updateMicroStateMachines() {
         }
     }
 
+	
+
     for (auto iter = microStateMachines.begin(); iter != microStateMachines.end(); ++iter) {
         auto u = Broodwar->getUnit(iter->first);
         auto sm = iter->second;
@@ -395,7 +417,7 @@ void FirstBot::updateMicroStateMachines() {
         if ( u->getType().isResourceDepot() ) {
             // A resource depot is a Command Center, Nexus, or Hatchery
             // Order the depot to construct more workers! But only when it is idle.
-            if ( u->isIdle() )
+            if ( u->isIdle() && currentWorkers < maximumWorkers )
             {
                 u->train(u->getType().getRace().getWorker());
             }
