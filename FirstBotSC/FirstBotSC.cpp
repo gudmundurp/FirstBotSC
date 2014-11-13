@@ -106,7 +106,7 @@ void FirstBot::searchAndDestroy(bool defend)
 		if (u->exists() && u->isVisible()) {
 		   pointsOfInterest.insert(u);
 		}
-		else if(!u->exists() && Broodwar->isVisible(u->getTilePosition())) {
+		else if(!u->exists() && pointsOfInterest.find(u) != pointsOfInterest.end() && Broodwar->isVisible(u->getTilePosition())) {
 			pointsOfInterest.erase(u);
 		}
 		if (u->getPosition().x > Broodwar->mapWidth() || u->getPosition().y > Broodwar->mapHeight()) {
@@ -117,9 +117,28 @@ void FirstBot::searchAndDestroy(bool defend)
 	TilePosition defencePosition = Broodwar->self()->getStartLocation();
 	TilePosition attackPosition = *pointsOfInterest.begin();
 	TilePosition scoutPosition = *(std::next(pointsOfInterest.begin(), ruin(gen) * pointsOfInterest.size()));
-	for (PointOfInterest location : pointsOfInterest) {
-		if (static_cast<TilePosition>(location) != defencePosition) {
-			attackPosition = location;
+	bool attackPositionIsBuilding = false;
+
+	if (enemyBuildings.begin() != enemyBuildings.end()) {
+
+		for (auto location : enemyBuildings) {
+			//auto location = locationPair.second;
+			if (static_cast<TilePosition>(location) != defencePosition) {
+				attackPosition = TilePosition(location.getLastSeenPosition());
+
+				//Focus down all structures that we have found
+				if (location.isUnit() && location.getUnit()->getType() != UnitTypes::Special_Start_Location) break;
+			}
+		}
+	}
+	else {
+		for (PointOfInterest location : pointsOfInterest) {
+			if (static_cast<TilePosition>(location) != defencePosition) {
+				attackPosition = TilePosition(location.getLastSeenPosition());
+
+				//Focus down all structures that we have found
+				if (location.isUnit() && location.getUnit()->getType() != UnitTypes::Special_Start_Location) break;
+			}
 		}
 	}
 	Broodwar->sendText("x %d; y %d", attackPosition.x, attackPosition.y);
@@ -135,7 +154,6 @@ void FirstBot::searchAndDestroy(bool defend)
 			countMarines++;
 		}
 	}
-
 
 	Unitset myUnits = Broodwar->self()->getUnits();
 	for (Unitset::iterator u = myUnits.begin(); u != myUnits.end(); ++u) {
@@ -213,6 +231,34 @@ int getAvailableMinerals() {
   return retInt;
 }
 
+void FirstBot::onUnitShow(Unit u) {
+	if (u->getPlayer()->isEnemy(Broodwar->self()) && u->getType().isBuilding()) {
+		if (u->getType().isResourceDepot()) {
+		    enemyCommandCenter = VISIBLE;
+		}
+		if (u->getType() != UnitTypes::Special_Start_Location) {
+			enemyBuildings.insert(u);
+			pointsOfInterest.insert(u);
+		}
+	}
+}
+
+void FirstBot::onUnitDestroy(Unit u) {
+	if (u->getPlayer()->isEnemy(Broodwar->self()) && u->getType().isBuilding()) {
+		if (u->getType().isResourceDepot()) {
+			enemyCommandCenter = UNKNOWN;
+		}
+		enemyBuildings.erase(u);
+		pointsOfInterest.erase(u);
+	}
+}
+
+void FirstBot::onUnitHide(Unit u) {
+	if (u->getPlayer()->isEnemy(Broodwar->self()) && u->getType().isResourceDepot()) {
+		enemyCommandCenter = HIDDEN;
+	}
+}
+
 int speed = 0;
 void FirstBot :: onStart() {
     Broodwar->sendText("Hello world!");
@@ -227,7 +273,7 @@ void FirstBot :: onStart() {
     Broodwar->enableFlag(Flag::UserInput);
 
     // Uncomment the following line and the bot will know about everything through the fog of war (cheat).
-    Broodwar->enableFlag(Flag::CompleteMapInformation);
+    //Broodwar->enableFlag(Flag::CompleteMapInformation);
 
     // Set the command optimization level so that common commands can be grouped
     // and reduce the bot's APM (Actions Per Minute).
@@ -248,6 +294,15 @@ void slowOrSpeedForKeyboardState(bool increasing, bool decreasing) {
     Broodwar->setLocalSpeed(speed);
 }
 
+char* FirstBot::getEnemyCommandCenterString(){
+	switch (enemyCommandCenter) {
+	case(VISIBLE) : return "VISIBLE";
+	case(HIDDEN) : return "HIDDEN";
+	default:
+	case(UNKNOWN) : return "UNKNOWN";
+	}
+}
+
 void FirstBot :: onFrame() {
     // Called once every game frame
 
@@ -257,11 +312,12 @@ void FirstBot :: onFrame() {
     Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS() );
     Broodwar->drawTextScreen(200, 40,  "Reserved: %d",  reservedMinerals);
     Broodwar->drawTextScreen(200, 60, "Elapsed time: %d", Broodwar->elapsedTime());
-    BWAPI::Broodwar->drawTextScreen(200, 80, "Minerals: %d Gas: %d Supply: %d/%d",
+    /*BWAPI::Broodwar->drawTextScreen(200, 80, "Minerals: %d Gas: %d Supply: %d/%d",
         Broodwar->self()->minerals(),
         Broodwar->self()->gas(),
         Broodwar->self()->supplyUsed()/2,
-        Broodwar->self()->supplyTotal()/2);
+        Broodwar->self()->supplyTotal()/2);*/
+	Broodwar->drawTextScreen(200, 80, "Enemy Command Center: %10s", getEnemyCommandCenterString());
     Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
 
     auto mousePosition = Broodwar->getMousePosition();
