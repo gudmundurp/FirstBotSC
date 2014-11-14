@@ -1,7 +1,7 @@
 #include "StrategyStage.h"
 #include "FirstBotSC.h"
 #include <BWAPI.h>
-
+#include "Logger.h"
 using namespace BWAPI;
 
 namespace strategy {
@@ -91,12 +91,8 @@ int StrategyStage::estimateConstructionTime(UnitTypeEnum id)
 		int distance = manhattanDistance(position, scv->getTilePosition());
 		double approxSpeed = SCV_THROTLE_APPROXIMATION * UnitTypes::Terran_SCV.topSpeed();
 		int travelTime = ceil(distance / approxSpeed);
-		char buf[100] = {0};
-		errno = 0;
-		if (_snprintf(buf, sizeof(buf), "Travel time is %d", travelTime) > 0 || errno == ERANGE) {
-			buf[sizeof(buf) - 1] = '\0';
-			//Broodwar->sendText(buf);
-		}
+		LOGGER.logMessage("Travel time is %d", travelTime);
+
 		return ceil(distance / approxSpeed) + unittype.buildTime();
 	} else {
 		return -1;

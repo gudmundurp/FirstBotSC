@@ -10,6 +10,7 @@
 #include <ctime>
 #include <random>
 #include <set>
+#include "Logger.h"
 
 using namespace BWAPI;
 using namespace UnitTypes::Enum;
@@ -122,7 +123,7 @@ void FirstBot::searchAndDestroy(bool defend)
 			attackPosition = location;
 		}
 	}
-	Broodwar->sendText("x %d; y %d", attackPosition.x, attackPosition.y);
+	LOGGER.logMessage("Attacking (%d, %d)", attackPosition.x, attackPosition.y);
 
 	cleanUpDeadScouts(scoutingUnits);
 
@@ -215,7 +216,7 @@ int getAvailableMinerals() {
 
 int speed = 0;
 void FirstBot :: onStart() {
-    Broodwar->sendText("Hello world!");
+    LOGGER.logMessage("Starting...");
 
 	pointsOfInterest = Broodwar->getStartLocations();
 
@@ -271,6 +272,8 @@ void FirstBot :: onFrame() {
     Broodwar->drawTextScreen(400,20, "Mouse x: %d Mouse y: %d", mousePosition.x, mousePosition.y);
     Broodwar->drawTextScreen(400,40, "Left mouse pressed %s", (mouseState? "true" : "false"));
 
+	// Update the Log display
+	LOGGER.updateDisplay(Broodwar->getFrameCount());
 
     //slowOrSpeedForMouseState(mousePosition,mouseState);
     slowOrSpeedForKeyboardState(increasing,decreasing);
@@ -356,13 +359,10 @@ void FirstBot::updateManagerStateMachines(Advice advice) {
     if (advice == TrainMarine) {
         Unit trainer = findTrainer(UnitTypes::Terran_Barracks);
         if(!trainer) {
-            Broodwar->sendText("Enginn builder/trainer fannst");
+            LOGGER.logMessage("Enginn builder/trainer fannst");
         } else {
             trainer->train(UnitTypes::Terran_Marine);
         }
-    }
-    if (advice == Attack) {
-        //Broodwar->sendText("Attacking");
     }
 	searchAndDestroy(advice != Attack);
 }

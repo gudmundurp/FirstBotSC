@@ -3,16 +3,17 @@
 #include "SCV/SCV.h"
 #include "WorldImpl.h"
 #include "../FirstBotSC/FirstBotSC.h"
+#include "../FirstBotSC/Logger.h"	// TODO. Fix this include
 
 using namespace BWAPI;
 
 void SCVManagerSM::update(Advice advice) {
     if (advice == BuildSD) {
-        Broodwar->sendText("Building supply depot");
+        LOGGER.logMessage("Building supply depot");
         build(UnitTypes::Terran_Supply_Depot);
     }
     if (advice == BuildBarracks) {
-        Broodwar->sendText("Building barracks");
+        LOGGER.logMessage("Building barracks");
         build(UnitTypes::Terran_Barracks);
     }
 }
@@ -29,7 +30,7 @@ void SCVManagerSM::build(BWAPI::UnitType type) {
     Unit scv_bw = findTrainer(unitType);
 
     if(!scv_bw) {
-        Broodwar->sendText("Enginn SCV er tiltækur");
+        LOGGER.logMessage("Enginn SCV er tiltækur");
         return;
     }
     
@@ -39,9 +40,9 @@ void SCVManagerSM::build(BWAPI::UnitType type) {
             auto scv = microStateMachines[scv_bw->getID()];
             scv->build(type, targetBuildLocation);
         } else {
-            Broodwar->sendText("Found no build location");
+            LOGGER.logMessage("Found no build location");
         }
     } else {
-        Broodwar->sendText("Not a building?");
+        LOGGER.logMessage("Not a building?");
     }
 }
