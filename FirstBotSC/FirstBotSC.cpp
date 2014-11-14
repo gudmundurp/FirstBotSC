@@ -88,6 +88,11 @@ void cleanUpDeadScouts(std::set<Unit> scoutingUnits) {
 	}
 }
 
+FirstBot::FirstBot()
+	: maximumWorkers(0), currentWorkers(0)
+{
+}
+
 void FirstBot::searchAndDestroy(bool defend)
 {
 	static std::random_device rd;
@@ -338,8 +343,8 @@ void FirstBot :: onFrame() {
         Broodwar->self()->supplyTotal()/2);*/
 	Broodwar->drawTextScreen(200, 80, "Enemy Command Center: %10s", getEnemyCommandCenterString());
     Broodwar->drawTextScreen(200, 100, "Game speed: %d", speed);
-	Broodwar->drawTextScreen(200, 120, "Max workers: %d", maximumWorkers);
-	Broodwar->drawTextScreen(200, 140, "Current workers: %d", currentWorkers);
+	Broodwar->drawTextScreen(200, 120, "Max workers: %u", maximumWorkers);
+	Broodwar->drawTextScreen(200, 140, "Current workers: %u", currentWorkers);
 
     auto mousePosition = Broodwar->getMousePosition();
     auto mouseState = Broodwar->getMouseState(MouseButton::M_LEFT);

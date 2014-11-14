@@ -18,7 +18,9 @@ bool operator<(const PositionOrUnit& lhs, const PositionOrUnit& rhs);
 
 class FirstBot : public BWAPI::AIModule
 {
-	public:
+public:
+	FirstBot();
+
     virtual void onStart();
     virtual void onFrame();
 
@@ -135,6 +137,6 @@ private:
 	char* getEnemyCommandCenterString();
 	VisibilityState enemyCommandCenter = UNKNOWN;
 
-	size_t maximumWorkers;
-	size_t currentWorkers;
+	uint32_t maximumWorkers;
+	uint32_t currentWorkers;
 };
