@@ -145,6 +145,7 @@
     <ClInclude Include="BuildSecondBarracks.h" />
     <ClInclude Include="BuildSecondSupplyDepot.h" />
     <ClInclude Include="BWAPINice.h" />
+    <ClInclude Include="DisjointSet.h" />
     <ClInclude Include="FirstBotSC.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Oracle.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="FrameTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DisjointSet.cpp" />
     <ClCompile Include="UnitTestMain.cpp" />
     <ClCompile Include="BuildFirstBarracks.cpp" />
     <ClCompile Include="BuildFirstSupplyDepot.cpp" />
