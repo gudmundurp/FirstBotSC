@@ -14,6 +14,7 @@ BWAPIUserOverrides.props
 # Build results
 
 [Dd]ebug/
+[Uu]nit[Tt]est/
 [Rr]elease/
 [Ee]xecutable/
 x64/
