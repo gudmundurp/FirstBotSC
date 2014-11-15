@@ -83,6 +83,23 @@ TEST_CASE("Create union of 3 elements different way around.") {
 	REQUIRE(rep == d.Find(3));
 }
 
+TEST_CASE("UnionsAreSplittable") {
+	DisjointSet<int> d([](int val) { return val; });
+	d.Find(1);
+	d.Find(2);
+	d.Find(3);
+	d.Union(1, 2);
+	int rep = d.Union(2, 3);
+	REQUIRE(rep == d.Find(1));
+	REQUIRE(rep == d.Find(2));
+	REQUIRE(rep == d.Find(3));
+	d.Isolate(2);
+
+	REQUIRE(d.Find(1) == d.Find(3));
+	REQUIRE(2 == d.Find(2));
+	REQUIRE(2 != d.Find(1));
+}
+
 //uint32_t
 //index(const ElementType& element)
 //{
